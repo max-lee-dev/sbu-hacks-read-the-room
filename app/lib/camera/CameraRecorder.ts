@@ -77,12 +77,13 @@ export class CameraRecorder {
       throw new Error('Already recording');
     }
 
+    console.log('[CameraRecorder] Starting recording...');
     this.videoElement = videoElement;
     this.recordingId = crypto.randomUUID();
     this.chunks = [];
     this.state.frames = [];
-    this.state.elapsedMs = 0;
     this.startTime = Date.now();
+    console.log('[CameraRecorder] Recording ID:', this.recordingId);
 
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({
@@ -102,12 +103,13 @@ export class CameraRecorder {
       this.canvas.width = width;
       this.canvas.height = height;
 
+      // Mark recording active BEFORE starting the capture loop so the first tick runs
+      this.state.isRecording = true;
       this.setupAudioAnalysis();
       this.setupMediaRecorder();
       this.startFrameCapture();
       this.startMaxDurationTimer();
-
-      this.state.isRecording = true;
+      console.log('[CameraRecorder] Recording started successfully (isRecording set before capture)');
     } catch (error) {
       this.cleanup();
       throw error;
@@ -190,6 +192,12 @@ export class CameraRecorder {
         };
 
         this.state.frames.push(frame);
+        console.log('[CameraRecorder] Frame captured:', {
+          frameId: frame.id,
+          t: frame.t,
+          totalFrames: this.state.frames.length,
+          hasHandler: !!this.handlers.onFrame,
+        });
         this.handlers.onFrame?.(frame);
 
         if (this.analyser && dataArray.length > 0) {
@@ -223,8 +231,12 @@ export class CameraRecorder {
   }
 
   stop(): void {
-    if (!this.state.isRecording) return;
+    if (!this.state.isRecording) {
+      console.log('[CameraRecorder] Stop called but not recording');
+      return;
+    }
 
+    console.log('[CameraRecorder] Stopping recording, total frames:', this.state.frames.length);
     this.state.isRecording = false;
 
     if (this.frameTimer !== null) {
@@ -254,6 +266,12 @@ export class CameraRecorder {
       thumbnailDataUrl,
     };
 
+    console.log('[CameraRecorder] Finalizing recording:', {
+      recordingId: meta.id,
+      durationMs,
+      frameCount: meta.frameCount,
+      hasStopHandler: !!this.handlers.onStop,
+    });
     this.handlers.onStop?.(meta);
   }
 

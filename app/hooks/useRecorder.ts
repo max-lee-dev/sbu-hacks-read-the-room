@@ -36,15 +36,28 @@ export const useRecorder = (options?: UseRecorderOptions) => {
         },
       });
 
-      recorderRef.current.on('frame', (frame) => {
-        setFrames((prev) => [...prev, frame]);
+      recorderRef.current.on('onFrame', (frame) => {
+        console.log('[useRecorder] onFrame received:', {
+          frameId: frame.id,
+          t: frame.t,
+        });
+        setFrames((prev) => {
+          const updated = [...prev, frame];
+          console.log('[useRecorder] Frame state updated, total:', updated.length);
+          return updated;
+        });
       });
 
-      recorderRef.current.on('noise', (level) => {
+      recorderRef.current.on('onNoise', (level) => {
+        console.log('[useRecorder] onNoise received:', level);
         setNoiseLevel(level);
       });
 
-      recorderRef.current.on('stop', (recordingMeta) => {
+      recorderRef.current.on('onStop', (recordingMeta) => {
+        console.log('[useRecorder] onStop received:', {
+          recordingId: recordingMeta.id,
+          frameCount: recordingMeta.frameCount,
+        });
         setMeta(recordingMeta);
         persistRecordingMeta(recordingMeta);
       });
@@ -67,33 +80,43 @@ export const useRecorder = (options?: UseRecorderOptions) => {
   }, [isRecording]);
 
   const start = useCallback(async () => {
+    console.log('[useRecorder] start called', { hasPreview: !!previewRef.current, isRecording });
     if (!previewRef.current || isRecording) return;
 
     try {
+      console.log('[useRecorder] Calling CameraRecorder.start()');
       await recorderRef.current?.start(previewRef.current);
       setIsRecording(true);
       setElapsedMs(0);
       setFrames([]);
       setBlob(null);
       setNoiseLevel(undefined);
-      setRecordingId(recorderRef.current.getRecordingId());
+      const id = recorderRef.current?.getRecordingId() || null;
+      setRecordingId(id);
+      console.log('[useRecorder] Recording started, ID:', id);
     } catch (error) {
-      console.error('Failed to start recording:', error);
+      console.error('[useRecorder] Failed to start recording:', error);
       throw error;
     }
   }, [isRecording]);
 
   const stop = useCallback(() => {
+    console.log('[useRecorder] stop called', { isRecording, currentFrames: frames.length });
     if (!isRecording) return;
 
     recorderRef.current?.stop();
     setIsRecording(false);
 
     const state = recorderRef.current?.getState();
+    console.log('[useRecorder] After stop, state:', {
+      framesInState: state?.frames.length,
+      hasBlob: !!state?.blob,
+      currentFramesState: frames.length,
+    });
     if (state?.blob) {
       setBlob(state.blob);
     }
-  }, [isRecording]);
+  }, [isRecording, frames.length]);
 
   const reset = useCallback(() => {
     recorderRef.current?.reset();

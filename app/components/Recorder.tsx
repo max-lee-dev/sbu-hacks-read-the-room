@@ -23,17 +23,28 @@ export const Recorder = ({ onAnalyzed }: Props) => {
 
   const { analyze, loading, error } = useAnalysis();
 
+  console.log('[Recorder] Render state:', {
+    isRecording,
+    framesCount: frames.length,
+    recordingId,
+    hasMeta: !!meta,
+  });
+
   const handleStart = async () => {
+    console.log('[Recorder] handleStart clicked');
     try {
       await start();
+      console.log('[Recorder] Start successful');
     } catch (err: any) {
-      console.error('Failed to start recording:', err);
+      console.error('[Recorder] Failed to start recording:', err);
       alert('Failed to start recording. Please check camera permissions.');
     }
   };
 
   const handleStop = () => {
+    console.log('[Recorder] handleStop clicked, current frames:', frames.length);
     stop();
+    console.log('[Recorder] Stop called, frames after stop:', frames.length);
   };
 
   const handleAnalyze = async () => {
