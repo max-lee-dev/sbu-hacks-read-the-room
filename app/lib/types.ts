@@ -62,12 +62,7 @@ export type RoomInsight = {
     action: string[];
     location: string[];
   }>;
-  energyLevel: 'low' | 'medium' | 'high';
   noiseLevel?: 'low' | 'medium' | 'high' | null;
-  groups: Array<{
-    memberIds: string[];
-    openness: 'open' | 'closed' | 'unknown';
-  }>;
   recommendedTargets: Array<{
     personId: string;
     reason: string;
