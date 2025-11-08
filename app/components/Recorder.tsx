@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { useRecorder } from '../hooks/useRecorder';
 import { useAnalysis } from '../hooks/useAnalysis';
 
@@ -22,6 +23,33 @@ export const Recorder = ({ onAnalyzed }: Props) => {
   } = useRecorder({ fps: 1 });
 
   const { analyze, loading, error } = useAnalysis();
+  const hasAutoAnalyzedRef = useRef<string | null>(null);
+
+  // Automatically analyze when recording stops
+  useEffect(() => {
+    if (
+      !isRecording &&
+      frames.length > 0 &&
+      recordingId &&
+      meta &&
+      hasAutoAnalyzedRef.current !== recordingId
+    ) {
+      console.log('[Recorder] Auto-analyzing recording:', recordingId);
+      hasAutoAnalyzedRef.current = recordingId;
+      analyze(recordingId, frames, meta, { maxFrames: 20 }).then((result) => {
+        if (result && onAnalyzed) {
+          onAnalyzed(recordingId);
+        }
+      });
+    }
+  }, [isRecording, frames.length, recordingId, meta, analyze, onAnalyzed]);
+
+  // Reset auto-analyze flag when starting a new recording
+  useEffect(() => {
+    if (isRecording) {
+      hasAutoAnalyzedRef.current = null;
+    }
+  }, [isRecording]);
 
   console.log('[Recorder] Render state:', {
     isRecording,
@@ -54,6 +82,11 @@ export const Recorder = ({ onAnalyzed }: Props) => {
     if (result && onAnalyzed) {
       onAnalyzed(recordingId);
     }
+  };
+
+  const handleReset = () => {
+    hasAutoAnalyzedRef.current = null;
+    reset();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
@@ -135,8 +168,8 @@ export const Recorder = ({ onAnalyzed }: Props) => {
             className="w-full rounded-full border border-zinc-300 bg-transparent px-6 py-3 text-sm text-zinc-600 transition-colors hover:bg-zinc-50 active:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:active:bg-zinc-700"
             aria-label="Reset recording"
             tabIndex={0}
-            onClick={reset}
-            onKeyDown={(e) => handleKeyDown(e, reset)}
+            onClick={handleReset}
+            onKeyDown={(e) => handleKeyDown(e, handleReset)}
             disabled={loading}
           >
             Reset
