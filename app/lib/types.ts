@@ -54,7 +54,14 @@ export type PersonInsight = {
 };
 
 export type RoomInsight = {
+  setting: string;
   peopleCount: number;
+  people: Array<{
+    personId: string;
+    clothing_color: string;
+    action: string[];
+    location: string[];
+  }>;
   energyLevel: 'low' | 'medium' | 'high';
   noiseLevel?: 'low' | 'medium' | 'high' | null;
   groups: Array<{
@@ -70,6 +77,7 @@ export type RoomInsight = {
     reason: string;
   }>;
   suggestions: string[];
+  transcription: string;
 };
 
 export type AnalysisResult = {
