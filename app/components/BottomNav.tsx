@@ -9,8 +9,7 @@ export const BottomNav = () => {
   const isDashboard = pathname?.startsWith('/dashboard');
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-[480px] border-t border-black bg-white">
-      <div className="flex h-16 items-center justify-around">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-[480px] border-t border-zinc-200 bg-white/95 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/95">      <div className="flex h-16 items-center justify-around">
         <Link
           href="/"
           className={`flex flex-col items-center justify-center gap-1 px-4 py-2 ${isHome ? 'text-black' : 'text-gray-600'
