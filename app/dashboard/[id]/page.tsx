@@ -125,12 +125,12 @@ export default function AnalysisDetailPage() {
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 pb-24">
-        <div className="w-full border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
+        <div className="w-full flex flex-col gap-4 border border-black bg-white p-4 shadow-sm" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040' }}>
           <h2 className="mb-4 text-xl font-bold" style={{ color: '#FFFFFF' }}>Room Analysis</h2>
 
           {/* Video player */}
           {videoUrl && (
-            <div className="mb-4 rounded-xl p-3" style={{ backgroundColor: '#1A1A1A', border: '1px solid #404040' }}>
+            <div className="rounded-xl p-3" style={{ backgroundColor: '#1A1A1A', border: '1px solid #404040' }}>
               <video
                 key={videoUrl}
                 controls

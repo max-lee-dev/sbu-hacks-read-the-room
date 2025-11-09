@@ -152,7 +152,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
   const playedBars = Math.floor((progress / 100) * waveform.length);
 
   return (
-    <div className="rounded-lg border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
+    <div className="rounded-lg border border-black bg-white p-4 shadow-sm" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040' }}>
       <div className="mb-2 flex items-center gap-2">
         <Headphones className="h-5 w-5 text-black" style={{ color: '#FFFFFF' }} />
         <h2 className="text-lg font-bold text-black" style={{ color: '#FFFFFF' }}>Voice Summary</h2>
