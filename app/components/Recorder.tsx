@@ -184,7 +184,7 @@ export const Recorder = ({ onAnalyzed }: Props) => {
         </button>
 
         <button
-          className="w-full border border-black bg-white p-4 text-lg disabled:bg-gray-200"
+          className="w-full border border-black text-black bg-white p-4 text-lg disabled:bg-gray-200"
           aria-label="Analyze recording"
           tabIndex={0}
           onClick={handleAnalyze}
