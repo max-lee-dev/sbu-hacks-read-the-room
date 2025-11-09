@@ -57,9 +57,41 @@ export const useAnalysis = () => {
           ...analysisResult,
           video: videoInfo,
         };
-        setResult(enriched);
+
+        // Prefetch ElevenLabs audio for the transcription (ephemeral; not persisted)
+        let final: AnalysisResult = enriched;
+        const transcription = analysisResult?.summarized?.transcription?.trim();
+        if (transcription) {
+          try {
+            const audioRes = await fetch('/api/audio', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ text: transcription }),
+            });
+
+            if (audioRes.ok) {
+              const blob = await audioRes.blob();
+              const blobUrl = URL.createObjectURL(blob);
+              final = {
+                ...enriched,
+                audio: {
+                  blobUrl,
+                  contentType: blob.type || audioRes.headers.get('content-type') || 'audio/mpeg',
+                },
+              };
+            }
+          } catch (audioError) {
+            console.error('Failed to generate audio:', audioError);
+            // Continue without audio if TTS fails
+          }
+        }
+
+        setResult(final);
+        // Persist analysis without audio to avoid storing ephemeral object URLs
         persistAnalysis(enriched);
-        return enriched;
+        return final;
       } catch (err: any) {
         const errorMessage = err?.message || 'Failed to analyze recording';
         setError(errorMessage);
