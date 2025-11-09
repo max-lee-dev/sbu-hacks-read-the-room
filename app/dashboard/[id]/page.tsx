@@ -14,6 +14,7 @@ export default function AnalysisDetailPage() {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -34,6 +35,51 @@ export default function AnalysisDetailPage() {
     }
     setLoading(false);
   }, [id, router]);
+
+  useEffect(() => {
+    if (!analysis?.summarized?.transcription) return;
+
+    // If audio already exists in result, use it
+    if (analysis.audio?.blobUrl) {
+      setAudioUrl(analysis.audio.blobUrl);
+      return;
+    }
+
+    // Otherwise fetch audio for saved analyses
+    let active = true;
+    let tempUrl: string | null = null;
+
+    const fetchAudio = async () => {
+      try {
+        const res = await fetch('/api/audio', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text: analysis.summarized.transcription }),
+        });
+
+        if (!res.ok || !active) return;
+
+        const blob = await res.blob();
+        tempUrl = URL.createObjectURL(blob);
+        if (active) {
+          setAudioUrl(tempUrl);
+        }
+      } catch (error) {
+        console.error('Failed to fetch audio:', error);
+      }
+    };
+
+    fetchAudio();
+
+    return () => {
+      active = false;
+      if (tempUrl) {
+        URL.revokeObjectURL(tempUrl);
+      }
+    };
+  }, [analysis]);
 
   if (loading) {
     return (
@@ -88,6 +134,15 @@ export default function AnalysisDetailPage() {
               />
             </div>
           )}
+
+          {/* Voice Summary */}
+          {audioUrl && (
+            <div className="rounded-lg border border-black bg-white p-4">
+              <h2 className="mb-2 text-lg font-bold text-black">Voice Summary</h2>
+              <audio controls className="w-full" src={audioUrl} />
+            </div>
+          )}
+
           {/* Mood */}
           {summarized.mood && (
             <div className="rounded-lg border border-black bg-white p-4">

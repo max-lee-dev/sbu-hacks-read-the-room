@@ -97,6 +97,7 @@ export type AnalysisResult = {
     people: PersonInsight[];
   }>;
   video?: VideoInfo;
+  audio?: AudioInfo;
 };
 
 export type VideoInfo = {
@@ -106,5 +107,11 @@ export type VideoInfo = {
   size?: number;
   thumbnailPath?: string;
   thumbnailPublicUrl?: string;
+};
+
+export type AudioInfo = {
+  blobUrl?: string;
+  contentType?: string;
+  voiceId?: string;
 };
 
