@@ -22,7 +22,7 @@ export const SuggestionsCard = ({ suggestions }: Props) => {
       </div>
       <ul className="pt-1 list-none">
         {suggestions.map((suggestion, idx) => (
-          <li key={idx} className="mb-2 flex items-start gap-4 text-sm text-black" style={{ color: '#B0B0B0' }}>
+          <li key={idx} className={`${idx === suggestions.length - 1 ? "mb-2" : "mb-6"} flex items-start gap-4 text-sm text-black" style={{ color: '#B0B0B0' }}`}>
             <span className="flex mt-1 h-5 w-5 shrink-0 text-black items-center justify-center rounded border border-black bg-black text-xs font-bold" style={{ backgroundColor: '#3ECF8E', borderColor: '#3ECF8E' }}>
               {idx + 1}
             </span>

@@ -9,6 +9,7 @@ type Category = 'recent' | 'pinned';
 type Props = {
   onSelect: (result: AnalysisResult) => void;
   category?: Category;
+  searchQuery?: string;
 };
 
 const getInitials = (name: string): string => {
@@ -40,7 +41,115 @@ const formatDate = (timestamp: number): string => {
   return date.toLocaleString('en-US', options);
 };
 
-export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
+const searchInAnalysis = (result: AnalysisResult, query: string): boolean => {
+  if (!query.trim()) return true;
+
+  const lowerQuery = query.toLowerCase().trim();
+
+  // Helper function to check if a string matches the query
+  const matches = (text: string | number | null | undefined): boolean => {
+    if (text === null || text === undefined) return false;
+    return String(text).toLowerCase().includes(lowerQuery);
+  };
+
+  // Search in basic fields
+  if (
+    matches(result.recordingId) ||
+    matches(result.model) ||
+    matches(result.createdAt) ||
+    matches(result.rawText) ||
+    matches(result.rules)
+  ) {
+    return true;
+  }
+
+  // Search in insights
+  const { insights } = result;
+  if (
+    matches(insights.setting) ||
+    matches(insights.peopleCount) ||
+    matches(insights.noiseLevel)
+  ) {
+    return true;
+  }
+
+  // Search in people array
+  if (insights.people) {
+    for (const person of insights.people) {
+      if (
+        matches(person.personId) ||
+        matches(person.clothing_color) ||
+        matches(person.location) ||
+        person.action.some((action) => matches(action))
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // Search in recommendedTargets
+  if (insights.recommendedTargets) {
+    for (const target of insights.recommendedTargets) {
+      if (matches(target.personId) || matches(target.reason)) {
+        return true;
+      }
+    }
+  }
+
+  // Search in doNotApproach
+  if (insights.doNotApproach) {
+    for (const item of insights.doNotApproach) {
+      if (matches(item.personId) || matches(item.reason)) {
+        return true;
+      }
+    }
+  }
+
+  // Search in summarized fields
+  const { summarized } = result;
+  if (
+    matches(summarized.mood) ||
+    matches(summarized.noiseLevel) ||
+    matches(summarized.transcription)
+  ) {
+    return true;
+  }
+
+  // Search in suggestions
+  if (summarized.suggestions) {
+    for (const suggestion of summarized.suggestions) {
+      if (matches(suggestion.text)) {
+        return true;
+      }
+    }
+  }
+
+  // Search in perFrame data
+  if (result.perFrame) {
+    for (const frame of result.perFrame) {
+      if (matches(frame.t)) {
+        return true;
+      }
+      if (frame.people) {
+        for (const person of frame.people) {
+          if (
+            matches(person.id) ||
+            matches(person.emotion) ||
+            matches(person.availability) ||
+            matches(person.engagement) ||
+            matches(person.confidence)
+          ) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+
+  return false;
+};
+
+export const SavedAnalyses = ({ onSelect, category = 'recent', searchQuery = '' }: Props) => {
   const [analyses, setAnalyses] = useState<AnalysisResult[]>([]);
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
 
@@ -59,6 +168,12 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
   const filteredAnalyses = useMemo(() => {
     let filtered = [...analyses];
 
+    // Apply search filter
+    if (searchQuery.trim()) {
+      filtered = filtered.filter((result) => searchInAnalysis(result, searchQuery));
+    }
+
+    // Apply category filter
     if (category === 'recent') {
       filtered.sort((a, b) => b.createdAt - a.createdAt);
     } else if (category === 'pinned') {
@@ -67,7 +182,7 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
     }
 
     return filtered;
-  }, [analyses, category, pinnedIds]);
+  }, [analyses, category, pinnedIds, searchQuery]);
 
   const handleSelect = (result: AnalysisResult) => {
     onSelect(result);
@@ -86,7 +201,13 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
   if (filteredAnalyses.length === 0) {
     return (
       <div className="w-full rounded-2xl p-8 text-center" style={{ backgroundColor: '#2D2D2D' }}>
-        <p style={{ color: '#B0B0B0' }}>No saved analyses yet.</p>
+        <p style={{ color: '#B0B0B0' }}>
+          {searchQuery.trim()
+            ? `No analyses found matching "${searchQuery}".`
+            : category === 'pinned'
+              ? 'No pinned analyses yet.'
+              : 'No saved analyses yet.'}
+        </p>
       </div>
     );
   }
@@ -98,8 +219,6 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
         const videoUrl = result.video?.publicUrl || getVideoInfo(result.recordingId)?.publicUrl;
 
         const userName = insights.setting || 'User';
-
-        const likeCount = insights.recommendedTargets.length + insights.peopleCount;
 
         const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
 

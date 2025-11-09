@@ -134,17 +134,19 @@ export const Recorder = ({ onAnalyzed }: Props) => {
   }
 
   return (
-    <div className="pt-20 flex w-full flex-col gap-6">
-      <div className="relative w-full overflow-hidden rounded-3xl" style={{ border: '1px solid #333' }}>
+    <div className="relative flex h-[100svh] w-full flex-col" style={{ backgroundColor: '#000000' }}>
+      {/* Full-screen video */}
+      <div className="relative h-full w-full">
         <video
           ref={previewRef}
           playsInline
           muted
           autoPlay
-          className="h-auto w-full bg-black"
-          style={{ aspectRatio: '9/16', maxHeight: '70vh' }}
+          className="h-full w-full object-cover"
           aria-label="Camera preview"
         />
+
+        {/* Recording overlay */}
         {isRecording && (
           <div className="absolute left-3 top-3 rounded-md px-3 py-1.5 text-xs font-medium" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', color: '#FFFFFF' }}>
             <span>Recording {elapsedLabel}</span>
@@ -153,56 +155,58 @@ export const Recorder = ({ onAnalyzed }: Props) => {
             )}
           </div>
         )}
-      </div>
 
-      <div className="flex w-full flex-col items-center gap-4">
-        <button
-          className="flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            width: isRecording ? '64px' : '80px',
-            height: isRecording ? '64px' : '80px',
-            borderRadius: isRecording ? '8px' : '50%',
-            backgroundColor: isRecording ? '#EF4444' : '#EF4444',
-            border: '4px solid #FFFFFF',
-            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
-          }}
-          aria-label={isRecording ? 'Stop recording' : 'Start recording'}
-          tabIndex={0}
-          onClick={isRecording ? handleStop : handleStart}
-          onKeyDown={(e) => handleKeyDown(e, isRecording ? handleStop : handleStart)}
-          disabled={loading}
-        >
-          {isRecording ? (
-            <div style={{ width: '24px', height: '24px', backgroundColor: '#FFFFFF', borderRadius: '2px' }} />
-          ) : (
-            <div style={{ width: '24px', height: '24px', backgroundColor: '#FFFFFF', borderRadius: '50%' }} />
-          )}
-        </button>
-
-        {frames.length > 0 && !isRecording && (
+        {/* Controls overlay */}
+        <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center gap-4 pb-24 pt-6" style={{ background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%)' }}>
           <button
-            className="rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+            className="flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
-              backgroundColor: '#333',
-              color: '#FFFFFF',
-              border: '1px solid #444'
+              width: isRecording ? '64px' : '80px',
+              height: isRecording ? '64px' : '80px',
+              borderRadius: isRecording ? '8px' : '50%',
+              backgroundColor: isRecording ? '#EF4444' : '#EF4444',
+              border: '4px solid #FFFFFF',
+              boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
             }}
-            aria-label="Reset recording"
+            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
             tabIndex={0}
-            onClick={handleReset}
-            onKeyDown={(e) => handleKeyDown(e, handleReset)}
+            onClick={isRecording ? handleStop : handleStart}
+            onKeyDown={(e) => handleKeyDown(e, isRecording ? handleStop : handleStart)}
             disabled={loading}
           >
-            Reset
+            {isRecording ? (
+              <div style={{ width: '24px', height: '24px', backgroundColor: '#FFFFFF', borderRadius: '2px' }} />
+            ) : (
+              <div style={{ width: '24px', height: '24px', backgroundColor: '#FFFFFF', borderRadius: '50%' }} />
+            )}
           </button>
+
+          {frames.length > 0 && !isRecording && (
+            <button
+              className="rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+              style={{
+                backgroundColor: 'rgba(51, 51, 51, 0.9)',
+                color: '#FFFFFF',
+                border: '1px solid rgba(68, 68, 68, 0.8)'
+              }}
+              aria-label="Reset recording"
+              tabIndex={0}
+              onClick={handleReset}
+              onKeyDown={(e) => handleKeyDown(e, handleReset)}
+              disabled={loading}
+            >
+              Reset
+            </button>
+          )}
+        </div>
+
+        {/* Error overlay */}
+        {error && (
+          <div className="absolute left-4 right-4 top-20 rounded-2xl p-3 text-sm" style={{ border: '1px solid #EF4444', backgroundColor: 'rgba(239, 68, 68, 0.9)', color: '#FFFFFF' }}>
+            {error}
+          </div>
         )}
       </div>
-
-      {error && (
-        <div className="w-full rounded-2xl p-3 text-sm" style={{ border: '1px solid #EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#EF4444' }}>
-          {error}
-        </div>
-      )}
     </div>
   );
 };

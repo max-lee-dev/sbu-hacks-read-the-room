@@ -7,9 +7,11 @@ import { getAnalysis, getVideoInfo } from '@/app/lib/storage';
 import { BottomNav } from '@/app/components/BottomNav';
 import { MoodCard } from '@/app/components/MoodCard';
 import { NoiseCard } from '@/app/components/NoiseCard';
+import { RulesCitation } from '@/app/components/RulesCitation';
 import { SuggestionsCard } from '@/app/components/SuggestionsCard';
 import { TranscriptionCard } from '@/app/components/TranscriptionCard';
 import { VoiceSummaryCard } from '@/app/components/VoiceSummaryCard';
+import { VoiceSummaryCardSkeleton } from '@/app/components/VoiceSummaryCardSkeleton';
 
 export default function AnalysisDetailPage() {
   const params = useParams();
@@ -110,23 +112,23 @@ export default function AnalysisDetailPage() {
   const { insights, summarized } = analysis;
 
   return (
-    <div className="mx-auto flex min-h-[100svh] max-w-[480px] flex-col font-sans" style={{ backgroundColor: '#1A1A1A' }}>
-      <header className="w-full px-4 pt-6 pb-4">
-        <h1 className="text-2xl font-bold capitalize" style={{ color: '#FFFFFF' }}>{insights.setting}</h1>
-        <p className="mt-1 text-xs" style={{ color: '#B0B0B0' }}>
-          {new Date(analysis.createdAt).toLocaleDateString([], {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </p>
-      </header>
+    <div className="relative mx-auto flex min-h-[100svh] max-w-[480px] flex-col font-sans" style={{ backgroundColor: '#1A1A1A' }}>
+
 
       <main className="flex-1 overflow-y-auto px-4 pb-24">
-        <div className="w-full flex flex-col gap-4 rounded-2xl border border-black bg-white p-4 shadow-sm" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040' }}>
-          <h2 className="mb-4 text-xl font-bold" style={{ color: '#FFFFFF' }}>Room Analysis</h2>
+        <div className="w-full flex flex-col mt-2 gap-4 rounded-2xl border border-black bg-white p-4 shadow-sm" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040' }}>
+          <header className="w-full px-2">
+            <h1 className="text-2xl font-bold capitalize" style={{ color: '#FFFFFF' }}>{insights.setting}</h1>
+            <p className="mt-1 text-xs" style={{ color: '#B0B0B0' }}>
+              {new Date(analysis.createdAt).toLocaleDateString([], {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </p>
+          </header>
 
           {/* Video player */}
           {videoUrl && (
@@ -141,17 +143,23 @@ export default function AnalysisDetailPage() {
             </div>
           )}
 
-
-
+          {audioUrl ? (
+            <VoiceSummaryCard audioUrl={audioUrl} />
+          ) : summarized.transcription ? (
+            <VoiceSummaryCardSkeleton />
+          ) : null}
 
           <MoodCard mood={summarized.mood || ''} />
+
           <NoiseCard noiseLevel={summarized.noiseLevel} />
 
           <SuggestionsCard suggestions={summarized.suggestions || []} />
 
           <TranscriptionCard transcription={summarized.transcription || ''} />
 
-          {audioUrl && <VoiceSummaryCard audioUrl={audioUrl} />}
+          <RulesCitation rules={analysis.rules || ''} />
+
+
 
           <div className="mt-4 border-t border-black pt-3" style={{ borderColor: '#404040' }}>
             <div className="text-xs" style={{ color: '#808080' }}>

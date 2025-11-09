@@ -154,8 +154,8 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
   return (
     <div className="rounded-2xl border border-black bg-white p-4 shadow-sm" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040' }}>
       <div className="mb-2 flex items-center gap-2">
-        <Headphones className="h-5 w-5 text-black" style={{ color: '#FFFFFF' }} />
-        <h2 className="text-lg font-bold text-black" style={{ color: '#FFFFFF' }}>Voice Summary</h2>
+        <Headphones className="h-5 w-5 text-black" style={{ color: '#E0E0E0' }} />
+        <h2 className="text-lg font-bold text-black" style={{ color: '#E0E0E0' }}>Voice Summary</h2>
       </div>
       {/* Waveform */}
       <div
@@ -191,7 +191,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={handleSkipToStart}
           className="flex h-8 w-8 items-center justify-center rounded-full text-black transition-opacity hover:opacity-70"
-          style={{ color: '#FFFFFF' }}
+          style={{ color: '#E0E0E0' }}
           aria-label="Skip to start"
         >
           <svg
@@ -212,7 +212,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={() => handleSeek(-10)}
           className="relative flex h-10 w-10 items-center justify-center rounded-full border border-black bg-white text-black transition-opacity hover:opacity-70"
-          style={{ backgroundColor: '#353535', borderColor: '#404040', color: '#FFFFFF' }}
+          style={{ backgroundColor: '#353535', borderColor: '#404040', color: '#E0E0E0' }}
           aria-label="Rewind 10 seconds"
         >
           <svg
@@ -247,11 +247,12 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
           {isPlaying ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-7 text-white"
+              className="h-7 w-7"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={3}
+              style={{ color: '#E0E0E0' }}
             >
               <path
                 strokeLinecap="round"
@@ -262,11 +263,12 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-7 text-white"
+              className="h-7 w-7"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={3}
+              style={{ color: '#E0E0E0' }}
             >
               <path
                 strokeLinecap="round"
@@ -286,7 +288,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={() => handleSeek(10)}
           className="relative flex h-10 w-10 items-center justify-center rounded-full border border-black bg-white text-black transition-opacity hover:opacity-70"
-          style={{ backgroundColor: '#353535', borderColor: '#404040', color: '#FFFFFF' }}
+          style={{ backgroundColor: '#353535', borderColor: '#404040', color: '#E0E0E0' }}
           aria-label="Fast forward 10 seconds"
         >
           <svg
@@ -315,7 +317,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={handleSkipToEnd}
           className="flex h-8 w-8 items-center justify-center rounded-full text-black transition-opacity hover:opacity-70"
-          style={{ color: '#FFFFFF' }}
+          style={{ color: '#E0E0E0' }}
           aria-label="Skip to end"
         >
           <svg
