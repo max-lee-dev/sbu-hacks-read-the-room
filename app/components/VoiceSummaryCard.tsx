@@ -1,5 +1,7 @@
 'use client';
 
+import { Headphones } from 'lucide-react';
+import type { MouseEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
 type Props = {
@@ -135,7 +137,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
     audio.currentTime = duration;
   };
 
-  const handleWaveformClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleWaveformClick = (e: MouseEvent<HTMLDivElement>) => {
     const audio = audioRef.current;
     if (!audio || duration === 0) return;
 
@@ -151,11 +153,13 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
 
   return (
     <div className="rounded-lg border border-black bg-white p-4">
-      <h2 className="mb-4 text-lg font-bold text-black">Voice Summary</h2>
-
+      <div className="mb-2 flex items-center gap-2">
+        <Headphones className="h-5 w-5 text-black" />
+        <h2 className="text-lg font-bold text-black">Voice Summary</h2>
+      </div>
       {/* Waveform */}
       <div
-        className="mb-3 flex h-12 cursor-pointer items-end justify-center gap-0.5"
+        className="mb-3 mt-2 flex h-12 cursor-pointer items-end justify-center gap-0.5"
         onClick={handleWaveformClick}
       >
         {waveform.map((height, index) => {
