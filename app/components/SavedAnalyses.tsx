@@ -60,6 +60,8 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
     onSelect(result);
   };
 
+
+
   const handleDelete = (e: React.MouseEvent, recordingId: string) => {
     e.stopPropagation();
     if (confirm('Are you sure you want to delete this analysis?')) {
@@ -80,7 +82,7 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
     <div className="w-full space-y-4">
       {filteredAnalyses.map((result) => {
         const { insights, summarized } = result;
-        const videoUrl = result.video?.publicUrl || getVideoInfo(result.recordingId)?.publicUrl;
+        const thumbnailUrl = result.video?.thumbnailPublicUrl || getVideoInfo(result.recordingId)?.thumbnailPublicUrl;
         const userName = insights.setting || 'User';
         const likeCount = insights.recommendedTargets.length + insights.peopleCount;
         const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
@@ -122,28 +124,16 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
               </button>
             </div>
 
+
             {/* Video thumbnail */}
             <div className="relative mb-3 w-full border border-black bg-gray-200">
-              {videoUrl ? (
+              {thumbnailUrl ? (
                 <div className="relative w-full">
-                  <video
-                    src={videoUrl}
-                    className="h-full w-full"
-                    preload="metadata"
+                  <img
+                    src={thumbnailUrl}
+                    alt="Video thumbnail"
+                    className="h-full w-full object-cover"
                   />
-                  {/* Play button overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="flex h-16 w-16 items-center justify-center border border-white bg-white">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-8 w-8"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </div>
-                  </div>
                   {/* Flag icon */}
                   <button
                     onClick={(e) => {

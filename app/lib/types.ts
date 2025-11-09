@@ -104,5 +104,7 @@ export type VideoInfo = {
   publicUrl?: string;
   contentType?: string;
   size?: number;
+  thumbnailPath?: string;
+  thumbnailPublicUrl?: string;
 };
 
