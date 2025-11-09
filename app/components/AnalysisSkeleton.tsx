@@ -13,17 +13,17 @@ export const AnalysisSkeleton = () => {
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 pb-24">
-        <div className="w-full border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
+        <div className="w-full rounded-2xl border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
           {/* Room Analysis header */}
           <div className="mb-4 h-7 w-40 animate-pulse rounded" style={{ backgroundColor: '#353535' }} />
 
           {/* Video player skeleton */}
-          <div className="mb-4 rounded-xl p-3" style={{ backgroundColor: '#1A1A1A', border: '1px solid #404040' }}>
+          <div className="mb-4 rounded-2xl p-3" style={{ backgroundColor: '#1A1A1A', border: '1px solid #404040' }}>
             <div className="w-full animate-pulse rounded-lg" style={{ aspectRatio: '16/9', backgroundColor: '#353535' }} />
           </div>
 
           {/* Voice Summary skeleton */}
-          <div className="mb-4 rounded-lg border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
+          <div className="mb-4 rounded-2xl border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
             <div className="mb-2 h-6 w-32 animate-pulse rounded" style={{ backgroundColor: '#353535' }} />
             <div className="mb-3 h-12 w-full animate-pulse rounded" style={{ backgroundColor: '#353535' }} />
             <div className="mb-4 flex justify-between">
@@ -36,7 +36,7 @@ export const AnalysisSkeleton = () => {
           </div>
 
           {/* Mood skeleton */}
-          <div className="mb-4 rounded-lg border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
+          <div className="mb-4 rounded-2xl border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
             <div className="mb-2 h-6 w-20 animate-pulse rounded" style={{ backgroundColor: '#353535' }} />
             <div className="h-4 w-full animate-pulse rounded" style={{ backgroundColor: '#353535' }} />
           </div>
@@ -72,7 +72,7 @@ export const AnalysisSkeleton = () => {
           </div>
 
           {/* Suggestions skeleton */}
-          <div className="mb-4 rounded-lg border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
+          <div className="mb-4 rounded-2xl border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
             <div className="mb-3 h-6 w-28 animate-pulse rounded" style={{ backgroundColor: '#353535' }} />
             <ul className="list-none space-y-2">
               {[1, 2, 3].map((idx) => (
@@ -88,7 +88,7 @@ export const AnalysisSkeleton = () => {
           </div>
 
           {/* Transcription skeleton */}
-          <div className="mb-4 rounded-lg border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
+          <div className="mb-4 rounded-2xl border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
             <div className="mb-2 h-6 w-32 animate-pulse rounded" style={{ backgroundColor: '#353535' }} />
             <div className="space-y-2">
               <div className="h-4 w-full animate-pulse rounded" style={{ backgroundColor: '#353535' }} />

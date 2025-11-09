@@ -152,7 +152,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
   const playedBars = Math.floor((progress / 100) * waveform.length);
 
   return (
-    <div className="rounded-lg border border-black bg-white p-4 shadow-sm" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040' }}>
+    <div className="rounded-2xl border border-black bg-white p-4 shadow-sm" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040' }}>
       <div className="mb-2 flex items-center gap-2">
         <Headphones className="h-5 w-5 text-black" style={{ color: '#FFFFFF' }} />
         <h2 className="text-lg font-bold text-black" style={{ color: '#FFFFFF' }}>Voice Summary</h2>
@@ -171,7 +171,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
               className="w-1 rounded-sm transition-colors"
               style={{
                 height: `${barHeight}%`,
-                backgroundColor: isPlayed ? '#FFB380' : '#404040',
+                backgroundColor: isPlayed ? '#3ECF8E' : '#404040',
                 minHeight: '4px',
               }}
             />
@@ -241,7 +241,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={handlePlayPause}
           className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-black transition-opacity hover:opacity-90"
-          style={{ backgroundColor: '#FFB380', borderColor: '#FFB380' }}
+          style={{ backgroundColor: '#3ECF8E', borderColor: '#3ECF8E' }}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (

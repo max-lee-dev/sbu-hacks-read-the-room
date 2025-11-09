@@ -94,7 +94,7 @@ export default function DashboardPage() {
               : 'text-[#B0B0B0] hover:opacity-80'
               }`}
             style={{
-              backgroundColor: activeCategory === 'recent' ? '#FFB380' : '#2D2D2D',
+              backgroundColor: activeCategory === 'recent' ? '#3ECF8E' : '#2D2D2D',
             }}
           >
             Recent
@@ -106,7 +106,7 @@ export default function DashboardPage() {
               : 'text-[#B0B0B0] hover:opacity-80'
               }`}
             style={{
-              backgroundColor: activeCategory === 'pinned' ? '#FFB380' : '#2D2D2D',
+              backgroundColor: activeCategory === 'pinned' ? '#3ECF8E' : '#2D2D2D',
             }}
           >
             Pinned

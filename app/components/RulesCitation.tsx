@@ -25,11 +25,11 @@ export const RulesCitation = ({ rules }: Props) => {
   };
 
   return (
-    <div className="rounded-lg border border-black bg-white">
+    <div className="rounded-2xl border border-black bg-white">
       <button
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
-        className="w-full rounded-t-lg p-4 text-left text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+        className="w-full rounded-t-2xl p-4 text-left text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
         aria-expanded={isOpen}
         aria-label={isOpen ? 'Collapse rules' : 'Expand rules'}
       >

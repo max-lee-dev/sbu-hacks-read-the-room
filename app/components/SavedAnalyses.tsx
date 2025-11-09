@@ -27,6 +27,19 @@ const formatLikeCount = (count: number): string => {
   return count.toString();
 };
 
+const formatDate = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  const options: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+  return date.toLocaleString('en-US', options);
+};
+
 export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
   const [analyses, setAnalyses] = useState<AnalysisResult[]>([]);
   const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
@@ -102,20 +115,12 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
           >
             {/* User info */}
             <div className="mb-3 flex items-center gap-3">
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-white"
-                style={{
-                  background: 'linear-gradient(135deg, #4A7BA7 0%, #D98BA6 50%, #E8B4A0 100%)',
-                }}
-              >
-                {getInitials(displayName)}
-              </div>
               <div className="flex-1">
-                <h3 className="text-sm font-semibold" style={{ color: '#FFFFFF' }}>
+                <h3 className="pl-2 text-lg font-semibold" style={{ color: '#FFFFFF' }}>
                   {displayName}
                 </h3>
-                <p className="text-xs" style={{ color: '#B0B0B0' }}>
-                  {summarized.mood.split('.')[0] || 'Shared a moment'}
+                <p className="pl-2 text-xs" style={{ color: '#B0B0B0' }}>
+                  {formatDate(result.createdAt)}
                 </p>
               </div>
               <button
@@ -142,7 +147,7 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
             </div>
 
             {/* Video thumbnail */}
-            <div className="relative mb-3 w-full overflow-hidden rounded-xl" style={{ backgroundColor: '#353535' }}>
+            <div className="relative mb-3 w-full overflow-hidden rounded-2xl" style={{ backgroundColor: '#353535' }}>
               {videoUrl ? (
                 <div className="relative aspect-[16/9] w-full">
                   <video
@@ -150,20 +155,6 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
                     className="h-full w-full object-cover"
                     preload="metadata"
                   />
-                  {/* Play button overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full backdrop-blur-sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-8 w-8"
-                        style={{ color: '#1A1A1A' }}
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </div>
-                  </div>
                   {/* Flag icon */}
                   <button
                     onClick={(e) => {
@@ -171,13 +162,12 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
                       handleTogglePinned(result.recordingId);
                     }}
                     className="absolute right-3 top-3 rounded-full p-1.5 backdrop-blur-sm transition-opacity hover:opacity-80"
-                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
                     aria-label={pinnedIds.has(result.recordingId) ? 'Unpin' : 'Pin'}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4"
-                      style={{ color: pinnedIds.has(result.recordingId) ? '#FFB380' : '#FF6B6B' }}
+                      style={{ color: pinnedIds.has(result.recordingId) ? '#3ECF8E' : '#FF6B6B' }}
                       fill={pinnedIds.has(result.recordingId) ? 'currentColor' : 'none'}
                       viewBox="0 0 24 24"
                       stroke={pinnedIds.has(result.recordingId) ? 'none' : 'currentColor'}
@@ -214,64 +204,6 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
                   </div>
                 </div>
               )}
-            </div>
-
-            {/* Interaction bar */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    style={{ color: '#FF6B6B' }}
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                  </svg>
-                  <span className="text-sm font-medium" style={{ color: '#FFFFFF' }}>
-                    {formatLikeCount(likeCount)}
-                  </span>
-                </div>
-                {/* User avatars */}
-                <div className="flex -space-x-2">
-                  {Array.from({ length: Math.min(3, insights.peopleCount) }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="h-6 w-6 rounded-full border-2"
-                      style={{
-                        borderColor: '#2D2D2D',
-                        background: 'linear-gradient(135deg, #4A7BA7 0%, #D98BA6 50%, #E8B4A0 100%)',
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Share functionality
-                }}
-                className="flex h-8 w-8 items-center justify-center rounded-full transition-opacity hover:opacity-80"
-                style={{ backgroundColor: '#FFB380' }}
-                aria-label="Share"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  style={{ color: '#1A1A1A' }}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                  />
-                </svg>
-              </button>
             </div>
           </div>
         );

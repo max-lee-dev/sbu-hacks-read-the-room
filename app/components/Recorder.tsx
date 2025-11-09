@@ -199,7 +199,7 @@ export const Recorder = ({ onAnalyzed }: Props) => {
       </div>
 
       {error && (
-        <div className="w-full rounded-lg p-3 text-sm" style={{ border: '1px solid #EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#EF4444' }}>
+        <div className="w-full rounded-2xl p-3 text-sm" style={{ border: '1px solid #EF4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#EF4444' }}>
           {error}
         </div>
       )}
