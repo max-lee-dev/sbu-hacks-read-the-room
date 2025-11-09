@@ -8,7 +8,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Room Reader",
+  title: "ReadTheRoom",
   description: "Social awareness assistant for reading the room",
   viewport: {
     width: 'device-width',

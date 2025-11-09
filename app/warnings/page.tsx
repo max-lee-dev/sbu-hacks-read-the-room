@@ -34,30 +34,30 @@ export default function WarningsPage() {
       })();
     }, [router]);
 
-    const handleStartRecording = () => {
-      if (dontShowAgain) {
-        localStorage.setItem('rr:hideWarnings', '1');
-      }
-      router.push('/record');
-    };
+  const handleStartRecording = () => {
+    if (dontShowAgain) {
+      localStorage.setItem('rr:hideWarnings', '1');
+    }
+    router.push('/record');
+  };
 
-    return (
-      <div className="relative mx-auto flex min-h-[100svh] max-w-[480px] flex-col font-sans" style={{ backgroundColor: '#1A1A1A' }}>
-        <header className="w-full px-4 pt-6 pb-6">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.back()}
-              className="rounded-full p-2 transition-opacity hover:opacity-80"
-              aria-label="Go back"
-              style={{ color: '#B0B0B0' }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <h1 className="text-xl font-bold" style={{ color: '#FFFFFF' }}>Warnings & Guidelines</h1>
-          </div>
-        </header>
+  return (
+    <div className="relative mx-auto flex min-h-[100svh] max-w-[480px] flex-col font-sans" style={{ backgroundColor: '#1A1A1A' }}>
+      <header className="w-full px-4 pt-6 pb-6">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.back()}
+            className="rounded-full p-2 transition-opacity hover:opacity-80"
+            aria-label="Go back"
+            style={{ color: '#B0B0B0' }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 className="text-xl font-bold" style={{ color: '#FFFFFF' }}>Warnings & Guidelines</h1>
+        </div>
+      </header>
 
         <main className="flex-1 overflow-y-auto px-4 pb-24 flex flex-col items-center">
           {/* How Room Reader Works Card */}
@@ -131,21 +131,21 @@ export default function WarningsPage() {
           </Checkbox>
         </div>
 
-          {/* Start Recording Button */}
-          <div className="mt-6 flex justify-center">
-            <button
-              onClick={handleStartRecording}
-              className="rounded-full px-5 py-2 text-sm font-semibold transition-all hover:opacity-90"
-              style={{ backgroundColor: '#3ECF8E', color: '#1A1A1A' }}
-              aria-label="Start recording"
-            >
-              Start Recording
-            </button>
-          </div>
-        </main>
+        {/* Start Recording Button */}
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={handleStartRecording}
+            className="rounded-full px-5 py-2 text-sm font-semibold transition-all hover:opacity-90"
+            style={{ backgroundColor: '#3ECF8E', color: '#1A1A1A' }}
+            aria-label="Start recording"
+          >
+            Start Recording
+          </button>
+        </div>
+      </main>
 
-        <BottomNav />
-      </div>
-    );
-  }
+      <BottomNav />
+    </div>
+  );
+}
 
