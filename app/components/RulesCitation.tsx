@@ -25,7 +25,7 @@ export const RulesCitation = ({ rules }: Props) => {
   };
 
   return (
-    <div className="rounded-lg border border-black bg-white">
+    <div className="rounded-lg border border-black bg-blue-500">
       <button
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
