@@ -60,9 +60,10 @@ export type RoomInsight = {
     personId: string;
     clothing_color: string;
     action: string[];
-    location: string[];
+    location: string;
+    first_seen: number | null;
   }>;
-  noiseLevel?: 'low' | 'medium' | 'high' | null;
+  noiseLevel: 'low' | 'medium' | 'high' | null;
   recommendedTargets: Array<{
     personId: string;
     reason: string;
@@ -71,7 +72,15 @@ export type RoomInsight = {
     personId: string;
     reason: string;
   }>;
-  suggestions: string[];
+};
+
+export type SummarizedInsight = {
+  mood: string;
+  noiseLevel: 'low' | 'medium' | 'high' | null;
+  suggestions: Array<{
+    text: string;
+    frame: number | null;
+  }>;
   transcription: string;
 };
 
@@ -81,9 +90,18 @@ export type AnalysisResult = {
   createdAt: number;
   rawText: string;
   insights: RoomInsight;
+  summarized: SummarizedInsight;
   perFrame?: Array<{
     t: number;
     people: PersonInsight[];
   }>;
+  video?: VideoInfo;
+};
+
+export type VideoInfo = {
+  path: string;
+  publicUrl?: string;
+  contentType?: string;
+  size?: number;
 };
 

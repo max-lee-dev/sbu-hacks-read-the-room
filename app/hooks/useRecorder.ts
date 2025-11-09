@@ -60,6 +60,14 @@ export const useRecorder = (options?: UseRecorderOptions) => {
         });
         setMeta(recordingMeta);
         persistRecordingMeta(recordingMeta);
+        // Ensure blob is captured after MediaRecorder.onstop sets it
+        const state = recorderRef.current?.getState();
+        if (state?.blob) {
+          console.log('[useRecorder] Blob available on onStop, size:', state.blob.size);
+          setBlob(state.blob);
+        } else {
+          console.log('[useRecorder] Blob not yet available on onStop');
+        }
       });
     }
 

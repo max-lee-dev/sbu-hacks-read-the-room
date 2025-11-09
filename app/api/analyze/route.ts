@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AnalysisResult, RoomInsight } from '@/app/lib/types';
+import { AnalysisResult, RoomInsight, SummarizedInsight } from '@/app/lib/types';
 import { buildSystemPrompt } from '@/app/prompts/analyze_prompt';
+import { buildSummarizePrompt } from '@/app/prompts/summarize_prompt';
 
 type ReqBody = {
   recordingId: string;
@@ -50,19 +51,45 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const result = await geminiModel.generateContent({
+    // Pass 1: Extract structured data
+    const pass1Result = await geminiModel.generateContent({
       contents: [{ role: 'user', parts }],
     });
 
-    const responseText = result.response.text();
-    let insights: RoomInsight;
+    const pass1Text = pass1Result.response.text();
+    let pass1Insights: RoomInsight;
 
     try {
-      insights = JSON.parse(responseText) as RoomInsight;
+      pass1Insights = JSON.parse(pass1Text) as RoomInsight;
     } catch (parseError) {
-      console.error('Failed to parse Gemini response:', responseText);
+      console.error('Failed to parse Pass 1 Gemini response:', pass1Text);
       return NextResponse.json(
-        { error: 'Failed to parse analysis response', raw: responseText },
+        { error: 'Failed to parse analysis response', raw: pass1Text },
+        { status: 500 }
+      );
+    }
+
+    // Pass 2: Summarize to UI-ready format
+    const summarizeParts = [
+      { text: buildSummarizePrompt(pass1Text) },
+      {
+        text: 'Return ONLY the JSON object matching the schema above. No markdown, no code blocks, no explanations.',
+      },
+    ];
+
+    const pass2Result = await geminiModel.generateContent({
+      contents: [{ role: 'user', parts: summarizeParts }],
+    });
+
+    const pass2Text = pass2Result.response.text();
+    let summarizedInsights: SummarizedInsight;
+
+    try {
+      summarizedInsights = JSON.parse(pass2Text) as SummarizedInsight;
+    } catch (parseError) {
+      console.error('Failed to parse Pass 2 Gemini response:', pass2Text);
+      return NextResponse.json(
+        { error: 'Failed to parse summarization response', raw: pass2Text },
         { status: 500 }
       );
     }
@@ -71,8 +98,9 @@ export async function POST(req: NextRequest) {
       recordingId,
       model: modelName,
       createdAt: Date.now(),
-      rawText: responseText,
-      insights,
+      rawText: pass1Text,
+      insights: pass1Insights,
+      summarized: summarizedInsights,
     };
 
     return NextResponse.json(analysisResult);

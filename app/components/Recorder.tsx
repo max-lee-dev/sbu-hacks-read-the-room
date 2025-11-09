@@ -1,18 +1,23 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useRecorder } from '../hooks/useRecorder';
 import { useAnalysis } from '../hooks/useAnalysis';
+import { uploadRecordingVideo } from '../lib/videos';
+import { persistVideoInfo } from '../lib/storage';
 
 type Props = {
   onAnalyzed?: (recordingId: string) => void;
 };
 
 export const Recorder = ({ onAnalyzed }: Props) => {
+  const router = useRouter();
   const {
     isRecording,
     previewRef,
     frames,
+    blob,
     noiseLevel,
     elapsedLabel,
     recordingId,
@@ -24,6 +29,7 @@ export const Recorder = ({ onAnalyzed }: Props) => {
 
   const { analyze, loading, error } = useAnalysis();
   const hasAutoAnalyzedRef = useRef<string | null>(null);
+  const uploadedRef = useRef<string | null>(null);
 
   // Automatically analyze when recording stops
   useEffect(() => {
@@ -37,12 +43,16 @@ export const Recorder = ({ onAnalyzed }: Props) => {
       console.log('[Recorder] Auto-analyzing recording:', recordingId);
       hasAutoAnalyzedRef.current = recordingId;
       analyze(recordingId, frames, meta, { maxFrames: 20 }).then((result) => {
-        if (result && onAnalyzed) {
-          onAnalyzed(recordingId);
+        if (result) {
+          if (onAnalyzed) {
+            onAnalyzed(recordingId);
+          }
+          // Redirect to dashboard detail page
+          router.push(`/dashboard/${recordingId}`);
         }
       });
     }
-  }, [isRecording, frames.length, recordingId, meta, analyze, onAnalyzed]);
+  }, [isRecording, frames.length, recordingId, meta, analyze, onAnalyzed, router]);
 
   // Reset auto-analyze flag when starting a new recording
   useEffect(() => {
@@ -50,6 +60,27 @@ export const Recorder = ({ onAnalyzed }: Props) => {
       hasAutoAnalyzedRef.current = null;
     }
   }, [isRecording]);
+
+  // Upload the recorded video blob to Supabase when available
+  useEffect(() => {
+    if (!blob || !recordingId) return;
+    if (uploadedRef.current === recordingId) return;
+    uploadedRef.current = recordingId;
+
+    uploadRecordingVideo(recordingId, blob, blob.type)
+      .then(({ path, publicUrl }) => {
+        persistVideoInfo(recordingId, {
+          path,
+          publicUrl,
+          contentType: blob.type,
+          size: blob.size,
+        });
+      })
+      .catch((err) => {
+        console.error('[Recorder] Video upload failed:', err);
+        uploadedRef.current = null; // allow retry
+      });
+  }, [blob, recordingId]);
 
   console.log('[Recorder] Render state:', {
     isRecording,
@@ -79,8 +110,12 @@ export const Recorder = ({ onAnalyzed }: Props) => {
     if (!frames.length || !recordingId || !meta) return;
 
     const result = await analyze(recordingId, frames, meta, { maxFrames: 20 });
-    if (result && onAnalyzed) {
-      onAnalyzed(recordingId);
+    if (result) {
+      if (onAnalyzed) {
+        onAnalyzed(recordingId);
+      }
+      // Redirect to dashboard detail page
+      router.push(`/dashboard/${recordingId}`);
     }
   };
 
@@ -97,26 +132,22 @@ export const Recorder = ({ onAnalyzed }: Props) => {
   };
 
   return (
-    <div className="flex w-full flex-col items-center gap-4">
-      <div className="relative w-full">
+    <div className="flex w-full flex-col gap-4">
+      <div className="relative w-full border border-black">
         <video
           ref={previewRef}
           playsInline
           muted
           autoPlay
-          className="h-auto w-full rounded-xl bg-black object-cover"
+          className="h-auto w-full bg-black"
           style={{ aspectRatio: '9/16', maxHeight: '70vh' }}
           aria-label="Camera preview"
         />
         {isRecording && (
-          <div className="absolute left-3 top-3 flex items-center gap-2 rounded-full bg-black/60 px-3 py-1.5 text-sm text-white">
-            <span
-              className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500"
-              aria-hidden="true"
-            />
-            <span>Recording… {elapsedLabel}</span>
+          <div className="absolute left-2 top-2 border border-white bg-black p-2 text-sm text-white">
+            <span>Recording {elapsedLabel}</span>
             {noiseLevel && (
-              <span className="ml-2 text-xs opacity-80">Noise: {noiseLevel}</span>
+              <span className="ml-2">Noise: {noiseLevel}</span>
             )}
           </div>
         )}
@@ -124,25 +155,25 @@ export const Recorder = ({ onAnalyzed }: Props) => {
 
       {frames.length > 0 && !isRecording && (
         <div className="w-full">
-          <div className="mb-2 text-sm text-zinc-600 dark:text-zinc-300">
+          <div className="mb-2 text-sm">
             Captured {frames.length} frame{frames.length !== 1 ? 's' : ''}
           </div>
-          <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto border border-gray-300 p-2">
             {frames.slice(0, 12).map((frame) => (
               <img
                 key={frame.id}
                 src={frame.dataUrl}
                 alt={`Frame at ${frame.t}ms`}
-                className="h-24 w-auto snap-start rounded-md border border-zinc-200 dark:border-zinc-800"
+                className="h-24 w-auto border border-black"
               />
             ))}
           </div>
         </div>
       )}
 
-      <div className="flex w-full flex-col gap-3">
+      <div className="flex w-full flex-col gap-2">
         <button
-          className="w-full rounded-full bg-zinc-900 px-6 py-4 text-lg font-medium text-white transition-colors hover:bg-zinc-800 active:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-zinc-100 dark:active:bg-zinc-200"
+          className="w-full border border-black bg-black p-4 text-lg text-white disabled:bg-gray-400"
           aria-label={isRecording ? 'Stop recording' : 'Start recording'}
           tabIndex={0}
           onClick={isRecording ? handleStop : handleStart}
@@ -153,19 +184,19 @@ export const Recorder = ({ onAnalyzed }: Props) => {
         </button>
 
         <button
-          className="w-full rounded-full border-2 border-zinc-300 bg-white px-6 py-4 text-lg font-medium text-zinc-900 transition-colors hover:bg-zinc-50 active:bg-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800 dark:active:bg-zinc-700"
+          className="w-full border border-black bg-white p-4 text-lg disabled:bg-gray-200"
           aria-label="Analyze recording"
           tabIndex={0}
           onClick={handleAnalyze}
           onKeyDown={(e) => handleKeyDown(e, handleAnalyze)}
           disabled={isRecording || frames.length === 0 || loading}
         >
-          {loading ? 'Analyzing…' : 'Analyze Recording'}
+          {loading ? 'Analyzing...' : 'Analyze Recording'}
         </button>
 
         {frames.length > 0 && !isRecording && (
           <button
-            className="w-full rounded-full border border-zinc-300 bg-transparent px-6 py-3 text-sm text-zinc-600 transition-colors hover:bg-zinc-50 active:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:active:bg-zinc-700"
+            className="w-full border border-black bg-white p-3 text-sm disabled:bg-gray-200"
             aria-label="Reset recording"
             tabIndex={0}
             onClick={handleReset}
@@ -178,7 +209,7 @@ export const Recorder = ({ onAnalyzed }: Props) => {
       </div>
 
       {error && (
-        <div className="w-full rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
+        <div className="w-full border border-red-500 bg-red-100 p-3 text-sm text-red-900">
           {error}
         </div>
       )}

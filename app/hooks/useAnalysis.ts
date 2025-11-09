@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import { SocialAnalysisClient } from '../lib/analysis/SocialAnalysisClient';
 import { AnalysisResult, Frame, RecordingMeta } from '../lib/types';
-import { persistAnalysis } from '../lib/storage';
+import { getVideoInfo, persistAnalysis } from '../lib/storage';
 
 type AnalyzeOptions = {
   maxFrames?: number;
@@ -33,9 +33,14 @@ export const useAnalysis = () => {
 
       try {
         const analysisResult = await clientRef.analyze(recordingId, frames, meta, options);
-        setResult(analysisResult);
-        persistAnalysis(analysisResult);
-        return analysisResult;
+        const videoInfo = getVideoInfo(recordingId);
+        const enriched: AnalysisResult = {
+          ...analysisResult,
+          video: videoInfo ?? analysisResult.video,
+        };
+        setResult(enriched);
+        persistAnalysis(enriched);
+        return enriched;
       } catch (err: any) {
         const errorMessage = err?.message || 'Failed to analyze recording';
         setError(errorMessage);
