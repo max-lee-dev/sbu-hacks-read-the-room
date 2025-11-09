@@ -25,22 +25,22 @@ export const RulesCitation = ({ rules }: Props) => {
   };
 
   return (
-    <div className="border border-black bg-white">
+    <div className="rounded-lg border border-black bg-white">
       <button
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
-        className="w-full p-4 text-left focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+        className="w-full rounded-t-lg p-4 text-left text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
         aria-expanded={isOpen}
         aria-label={isOpen ? 'Collapse rules' : 'Expand rules'}
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">Rules</h2>
-          <span className="text-sm">{isOpen ? '−' : '+'}</span>
+          <h2 className="text-lg font-bold text-black">Rules</h2>
+          <span className="text-sm text-black">{isOpen ? '−' : '+'}</span>
         </div>
       </button>
       {isOpen && (
         <div className="border-t border-black p-4">
-          <p className="text-sm">{rules}</p>
+          <p className="text-sm text-black">{rules}</p>
         </div>
       )}
     </div>

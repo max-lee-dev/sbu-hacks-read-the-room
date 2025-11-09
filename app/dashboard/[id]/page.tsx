@@ -39,7 +39,7 @@ export default function AnalysisDetailPage() {
     return (
       <div className="mx-auto flex min-h-[100svh] max-w-[480px] flex-col bg-white">
         <div className="flex flex-1 items-center justify-center">
-          <p>Loading...</p>
+          <p className="text-black">Loading...</p>
         </div>
         <BottomNav />
       </div>
@@ -50,7 +50,7 @@ export default function AnalysisDetailPage() {
     return (
       <div className="mx-auto flex min-h-[100svh] max-w-[480px] flex-col bg-white">
         <div className="flex flex-1 items-center justify-center">
-          <p>Analysis not found</p>
+          <p className="text-black">Analysis not found</p>
         </div>
         <BottomNav />
       </div>
@@ -62,8 +62,8 @@ export default function AnalysisDetailPage() {
   return (
     <div className="mx-auto flex min-h-[100svh] max-w-[480px] flex-col bg-white">
       <header className="w-full border-b border-black p-4">
-        <h1 className="text-xl font-bold">{insights.setting}</h1>
-        <p className="mt-1 text-xs">
+        <h1 className="text-xl font-bold text-black">{insights.setting}</h1>
+        <p className="mt-1 text-xs text-black">
           {new Date(analysis.createdAt).toLocaleDateString([], {
             month: 'long',
             day: 'numeric',
@@ -78,43 +78,43 @@ export default function AnalysisDetailPage() {
         <div className="space-y-4">
           {/* Video player */}
           {videoUrl && (
-            <div className="border border-black bg-gray-100 p-2">
+            <div className="rounded-lg border border-black bg-gray-100 p-2">
               <video
                 key={videoUrl}
                 controls
                 playsInline
-                className="w-full"
+                className="w-full rounded-md"
                 src={videoUrl}
               />
             </div>
           )}
           {/* Mood */}
           {summarized.mood && (
-            <div className="border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold">Mood</h2>
-              <p className="text-sm">{summarized.mood}</p>
+            <div className="rounded-lg border border-black bg-white p-4">
+              <h2 className="mb-2 text-lg font-bold text-black">Mood</h2>
+              <p className="text-sm text-black">{summarized.mood}</p>
             </div>
           )}
 
           {/* Noise Level */}
           {summarized.noiseLevel && (
-            <div className="border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold">Noise Level</h2>
-              <p className="text-2xl font-bold">{summarized.noiseLevel}</p>
+            <div className="rounded-lg border border-black bg-white p-4">
+              <h2 className="mb-2 text-lg font-bold text-black">Noise Level</h2>
+              <p className="text-2xl font-bold text-black">{summarized.noiseLevel}</p>
             </div>
           )}
 
           {/* Suggestions */}
           {summarized.suggestions && summarized.suggestions.length > 0 && (
-            <div className="border border-black bg-white p-4">
-              <h2 className="mb-3 text-lg font-bold">Suggestions</h2>
+            <div className="rounded-lg border border-black bg-white p-4">
+              <h2 className="mb-3 text-lg font-bold text-black">Suggestions</h2>
               <ul className="list-none">
                 {summarized.suggestions.map((suggestion, idx) => (
-                  <li key={idx} className="mb-2 flex items-start gap-2 text-sm">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center border border-black bg-black text-xs font-bold text-white">
+                  <li key={idx} className="mb-2 flex items-start gap-2 text-sm text-black">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-black bg-black text-xs font-bold text-white">
                       {idx + 1}
                     </span>
-                    <span className="flex-1">{suggestion.text}</span>
+                    <span className="flex-1 text-black">{suggestion.text}</span>
                   </li>
                 ))}
               </ul>
@@ -123,9 +123,9 @@ export default function AnalysisDetailPage() {
 
           {/* Transcription */}
           {summarized.transcription && (
-            <div className="border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold">Transcription</h2>
-              <p className="text-sm">{summarized.transcription}</p>
+            <div className="rounded-lg border border-black bg-white p-4">
+              <h2 className="mb-2 text-lg font-bold text-black">Transcription</h2>
+              <p className="text-sm text-black">{summarized.transcription}</p>
             </div>
           )}
 
@@ -133,36 +133,36 @@ export default function AnalysisDetailPage() {
           {analysis.rules && <RulesCitation rules={analysis.rules} />}
 
           {/* Additional Analytics */}
-          <div className="border border-black bg-white p-4">
-            <h2 className="mb-3 text-lg font-bold">Analytics</h2>
+          <div className="rounded-lg border border-black bg-white p-4">
+            <h2 className="mb-3 text-lg font-bold text-black">Analytics</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="text-xs">People Count</div>
-                <div className="mt-1 text-2xl font-bold">{insights.peopleCount}</div>
+                <div className="text-xs text-black">People Count</div>
+                <div className="mt-1 text-2xl font-bold text-black">{insights.peopleCount}</div>
               </div>
               <div>
-                <div className="text-xs">Approachable</div>
-                <div className="mt-1 text-2xl font-bold">{insights.recommendedTargets.length}</div>
+                <div className="text-xs text-black">Approachable</div>
+                <div className="mt-1 text-2xl font-bold text-black">{insights.recommendedTargets.length}</div>
               </div>
               <div>
-                <div className="text-xs">Avoid</div>
-                <div className="mt-1 text-2xl font-bold">{insights.doNotApproach.length}</div>
+                <div className="text-xs text-black">Avoid</div>
+                <div className="mt-1 text-2xl font-bold text-black">{insights.doNotApproach.length}</div>
               </div>
               <div>
-                <div className="text-xs">Model</div>
-                <div className="mt-1 text-sm font-bold">{analysis.model}</div>
+                <div className="text-xs text-black">Model</div>
+                <div className="mt-1 text-sm font-bold text-black">{analysis.model}</div>
               </div>
             </div>
           </div>
 
           {/* Recommended Targets */}
           {insights.recommendedTargets.length > 0 && (
-            <div className="border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold">Recommended to Approach</h2>
+            <div className="rounded-lg border border-black bg-white p-4">
+              <h2 className="mb-2 text-lg font-bold text-black">Recommended to Approach</h2>
               <ul className="list-none">
                 {insights.recommendedTargets.map((target, idx) => (
-                  <li key={idx} className="mb-1 text-sm">
-                    <span className="font-bold">Person {target.personId}</span>: {target.reason}
+                  <li key={idx} className="mb-1 text-sm text-black">
+                    <span className="font-bold text-black">Person {target.personId}</span>: <span className="text-black">{target.reason}</span>
                   </li>
                 ))}
               </ul>
@@ -171,12 +171,12 @@ export default function AnalysisDetailPage() {
 
           {/* Do Not Approach */}
           {insights.doNotApproach.length > 0 && (
-            <div className="border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold">Avoid Approaching</h2>
+            <div className="rounded-lg border border-black bg-white p-4">
+              <h2 className="mb-2 text-lg font-bold text-black">Avoid Approaching</h2>
               <ul className="list-none">
                 {insights.doNotApproach.map((target, idx) => (
-                  <li key={idx} className="mb-1 text-sm">
-                    <span className="font-bold">Person {target.personId}</span>: {target.reason}
+                  <li key={idx} className="mb-1 text-sm text-black">
+                    <span className="font-bold text-black">Person {target.personId}</span>: <span className="text-black">{target.reason}</span>
                   </li>
                 ))}
               </ul>
