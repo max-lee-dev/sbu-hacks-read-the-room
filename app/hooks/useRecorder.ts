@@ -27,7 +27,7 @@ export const useRecorder = (options?: UseRecorderOptions) => {
     if (!recorderRef.current) {
       recorderRef.current = new CameraRecorder({
         fps: options?.fps ?? 1,
-        quality: options?.quality ?? 0.7,
+        quality: options?.quality ?? 0.5,
         maxDurationMs: options?.maxDurationMs ?? 60000,
         videoConstraints: options?.videoConstraints ?? {
           facingMode: { ideal: 'environment' },

@@ -216,7 +216,9 @@ export const SavedAnalyses = ({ onSelect, category = 'recent', searchQuery = '' 
     <div className="w-full space-y-4">
       {filteredAnalyses.map((result) => {
         const { insights, summarized } = result;
-        const videoUrl = result.video?.publicUrl || getVideoInfo(result.recordingId)?.publicUrl;
+        const videoInfo = result.video || getVideoInfo(result.recordingId);
+        const thumbnailUrl = videoInfo?.thumbnailPublicUrl;
+        const videoUrl = videoInfo?.publicUrl;
 
         const userName = insights.setting || 'User';
 
@@ -267,13 +269,22 @@ export const SavedAnalyses = ({ onSelect, category = 'recent', searchQuery = '' 
 
             {/* Video thumbnail */}
             <div className="relative mb-3 w-full overflow-hidden rounded-2xl" style={{ backgroundColor: '#353535' }}>
-              {videoUrl ? (
+              {thumbnailUrl || videoUrl ? (
                 <div className="relative aspect-[16/9] w-full">
-                  <video
-                    src={videoUrl}
-                    className="h-full w-full object-cover"
-                    preload="metadata"
-                  />
+                  {thumbnailUrl ? (
+                    <img
+                      src={thumbnailUrl}
+                      alt="Recording thumbnail"
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <video
+                      src={videoUrl}
+                      className="h-full w-full object-cover"
+                      preload="metadata"
+                    />
+                  )}
                   {/* Flag icon */}
                   <button
                     onClick={(e) => {

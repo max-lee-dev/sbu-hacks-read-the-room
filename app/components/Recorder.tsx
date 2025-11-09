@@ -26,14 +26,27 @@ export const Recorder = ({ onAnalyzed }: Props) => {
     start,
     stop,
     reset,
-  } = useRecorder({ fps: 1 });
+  } = useRecorder({ fps: 1, maxDurationMs: 3000 });
 
   const { analyze, loading, error } = useAnalysis();
   const hasAutoAnalyzedRef = useRef<string | null>(null);
   const uploadedRef = useRef<string | null>(null);
   const [showSkeleton, setShowSkeleton] = useState(false);
 
-  // Automatically analyze when recording stops
+  // Show skeleton immediately when recording stops
+  useEffect(() => {
+    if (
+      !isRecording &&
+      frames.length > 0 &&
+      recordingId &&
+      hasAutoAnalyzedRef.current !== recordingId
+    ) {
+      console.log('[Recorder] Recording stopped, showing skeleton immediately');
+      setShowSkeleton(true);
+    }
+  }, [isRecording, frames.length, recordingId]);
+
+  // Automatically analyze when recording stops and meta is available
   useEffect(() => {
     if (
       !isRecording &&
@@ -44,7 +57,6 @@ export const Recorder = ({ onAnalyzed }: Props) => {
     ) {
       console.log('[Recorder] Auto-analyzing recording:', recordingId);
       hasAutoAnalyzedRef.current = recordingId;
-      setShowSkeleton(true);
       analyze(recordingId, frames, meta, { maxFrames: 20 })
         .then((result) => {
           setShowSkeleton(false);

@@ -149,17 +149,15 @@ export default function AnalysisDetailPage() {
             <VoiceSummaryCardSkeleton />
           ) : null}
 
-          <MoodCard mood={summarized.mood || ''} />
+          <RulesCitation rules={analysis.rules || ''} />
 
-          <NoiseCard noiseLevel={summarized.noiseLevel} />
+          <MoodCard mood={summarized.mood || ''} />
 
           <SuggestionsCard suggestions={summarized.suggestions || []} />
 
           <TranscriptionCard transcription={summarized.transcription || ''} />
 
-          <RulesCitation rules={analysis.rules || ''} />
-
-
+          <NoiseCard noiseLevel={summarized.noiseLevel} />
 
           <div className="mt-4 border-t border-black pt-3" style={{ borderColor: '#404040' }}>
             <div className="text-xs" style={{ color: '#808080' }}>
