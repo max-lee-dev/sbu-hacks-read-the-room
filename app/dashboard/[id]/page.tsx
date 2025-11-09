@@ -6,6 +6,11 @@ import { AnalysisResult } from '@/app/lib/types';
 import { getAnalysis, getVideoInfo } from '@/app/lib/storage';
 import { BottomNav } from '@/app/components/BottomNav';
 import { RulesCitation } from '@/app/components/RulesCitation';
+import { MoodCard } from '@/app/components/MoodCard';
+import { NoiseCard } from '@/app/components/NoiseCard';
+import { SuggestionsCard } from '@/app/components/SuggestionsCard';
+import { TranscriptionCard } from '@/app/components/TranscriptionCard';
+import { VoiceSummaryCard } from '@/app/components/VoiceSummaryCard';
 
 export default function AnalysisDetailPage() {
   const params = useParams();
@@ -135,54 +140,11 @@ export default function AnalysisDetailPage() {
             </div>
           )}
 
-          {/* Voice Summary */}
-          {audioUrl && (
-            <div className="rounded-lg border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold text-black">Voice Summary</h2>
-              <audio controls className="w-full" src={audioUrl} />
-            </div>
-          )}
-
-          {/* Mood */}
-          {summarized.mood && (
-            <div className="rounded-lg border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold text-black">Mood</h2>
-              <p className="text-sm text-black">{summarized.mood}</p>
-            </div>
-          )}
-
-          {/* Noise Level */}
-          {summarized.noiseLevel && (
-            <div className="rounded-lg border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold text-black">Noise Level</h2>
-              <p className="text-2xl font-bold text-black">{summarized.noiseLevel}</p>
-            </div>
-          )}
-
-          {/* Suggestions */}
-          {summarized.suggestions && summarized.suggestions.length > 0 && (
-            <div className="rounded-lg border border-black bg-white p-4">
-              <h2 className="mb-3 text-lg font-bold text-black">Suggestions</h2>
-              <ul className="list-none">
-                {summarized.suggestions.map((suggestion, idx) => (
-                  <li key={idx} className="mb-2 flex items-start gap-2 text-sm text-black">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-black bg-black text-xs font-bold text-white">
-                      {idx + 1}
-                    </span>
-                    <span className="flex-1 text-black">{suggestion.text}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Transcription */}
-          {summarized.transcription && (
-            <div className="rounded-lg border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold text-black">Transcription</h2>
-              <p className="text-sm text-black">{summarized.transcription}</p>
-            </div>
-          )}
+          {audioUrl && <VoiceSummaryCard audioUrl={audioUrl} />}
+          <MoodCard mood={summarized.mood || ''} />
+          <NoiseCard noiseLevel={summarized.noiseLevel} />
+          <SuggestionsCard suggestions={summarized.suggestions || []} />
+          <TranscriptionCard transcription={summarized.transcription || ''} />
 
           {/* Rules Citation */}
           {analysis.rules && <RulesCitation rules={analysis.rules} />}
