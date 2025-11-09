@@ -78,12 +78,12 @@ export default function AnalysisDetailPage() {
         <div className="space-y-4">
           {/* Video player */}
           {videoUrl && (
-            <div className="rounded-lg border border-black bg-gray-100 p-2">
+            <div className="rounded-lg border border-black bg-gray-100 overflow-hidden">
               <video
                 key={videoUrl}
                 controls
                 playsInline
-                className="w-full rounded-md"
+                className="w-full h-auto rounded-lg"
                 src={videoUrl}
               />
             </div>
