@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 export const BottomNav = () => {
   const pathname = usePathname();
 
-  const isHome = pathname === '/';
+  const isRecord = pathname === '/record' || pathname === '/warnings';
   const isDashboard = pathname?.startsWith('/dashboard');
 
   return (
@@ -50,7 +50,7 @@ export const BottomNav = () => {
         </Link>
 
         <Link
-          href="/"
+          href="/warnings"
           className="relative flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors"
           aria-label="Record"
         >
@@ -58,17 +58,17 @@ export const BottomNav = () => {
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
             viewBox="0 0 24 24"
-            fill={isHome ? '#3ECF8E' : 'none'}
-            stroke={isHome ? 'none' : 'currentColor'}
-            style={{ color: isHome ? '#3ECF8E' : '#B0B0B0' }}
+            fill={isRecord ? '#3ECF8E' : 'none'}
+            stroke={isRecord ? 'none' : 'currentColor'}
+            style={{ color: isRecord ? '#3ECF8E' : '#B0B0B0' }}
           >
-            <circle cx="12" cy="12" r="10" strokeWidth={isHome ? 0 : 2} />
-            <circle cx="12" cy="12" r="4" fill={isHome ? '#1A1A1A' : 'currentColor'} />
+            <circle cx="12" cy="12" r="10" strokeWidth={isRecord ? 0 : 2} />
+            <circle cx="12" cy="12" r="4" fill={isRecord ? '#1A1A1A' : 'currentColor'} />
           </svg>
-          <span className="text-xs font-medium" style={{ color: isHome ? '#3ECF8E' : '#B0B0B0' }}>
+          <span className="text-xs font-medium" style={{ color: isRecord ? '#3ECF8E' : '#B0B0B0' }}>
             Record
           </span>
-          {isHome && (
+          {isRecord && (
             <div
               className="absolute bottom-0 h-0.5 w-8 rounded-full"
               style={{ backgroundColor: '#3ECF8E' }}
