@@ -152,10 +152,10 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
   const playedBars = Math.floor((progress / 100) * waveform.length);
 
   return (
-    <div className="rounded-lg border border-black bg-white p-4">
+    <div className="rounded-lg border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
       <div className="mb-2 flex items-center gap-2">
-        <Headphones className="h-5 w-5 text-black" />
-        <h2 className="text-lg font-bold text-black">Voice Summary</h2>
+        <Headphones className="h-5 w-5 text-black" style={{ color: '#FFFFFF' }} />
+        <h2 className="text-lg font-bold text-black" style={{ color: '#FFFFFF' }}>Voice Summary</h2>
       </div>
       {/* Waveform */}
       <div
@@ -171,7 +171,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
               className="w-1 rounded-sm transition-colors"
               style={{
                 height: `${barHeight}%`,
-                backgroundColor: isPlayed ? '#FF6B35' : '#D1D5DB',
+                backgroundColor: isPlayed ? '#FFB380' : '#404040',
                 minHeight: '4px',
               }}
             />
@@ -180,7 +180,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
       </div>
 
       {/* Time Display */}
-      <div className="mb-4 flex items-center justify-between text-sm text-black">
+      <div className="mb-4 flex items-center justify-between text-sm text-black" style={{ color: '#B0B0B0' }}>
         <span className="font-medium">{formatTime(currentTime)}</span>
         <span className="font-medium">{formatTime(duration || 0)}</span>
       </div>
@@ -191,6 +191,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={handleSkipToStart}
           className="flex h-8 w-8 items-center justify-center rounded-full text-black transition-opacity hover:opacity-70"
+          style={{ color: '#FFFFFF' }}
           aria-label="Skip to start"
         >
           <svg
@@ -211,6 +212,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={() => handleSeek(-10)}
           className="relative flex h-10 w-10 items-center justify-center rounded-full border border-black bg-white text-black transition-opacity hover:opacity-70"
+          style={{ backgroundColor: '#353535', borderColor: '#404040', color: '#FFFFFF' }}
           aria-label="Rewind 10 seconds"
         >
           <svg
@@ -239,7 +241,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={handlePlayPause}
           className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-black transition-opacity hover:opacity-90"
-          style={{ backgroundColor: '#FF6B35' }}
+          style={{ backgroundColor: '#FFB380', borderColor: '#FFB380' }}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (
@@ -284,6 +286,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={() => handleSeek(10)}
           className="relative flex h-10 w-10 items-center justify-center rounded-full border border-black bg-white text-black transition-opacity hover:opacity-70"
+          style={{ backgroundColor: '#353535', borderColor: '#404040', color: '#FFFFFF' }}
           aria-label="Fast forward 10 seconds"
         >
           <svg
@@ -312,6 +315,7 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
         <button
           onClick={handleSkipToEnd}
           className="flex h-8 w-8 items-center justify-center rounded-full text-black transition-opacity hover:opacity-70"
+          style={{ color: '#FFFFFF' }}
           aria-label="Skip to end"
         >
           <svg

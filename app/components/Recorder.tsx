@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRecorder } from '../hooks/useRecorder';
 import { useAnalysis } from '../hooks/useAnalysis';
 import { uploadRecordingVideo } from '../lib/videos';
 import { persistVideoInfo } from '../lib/storage';
+import { AnalysisSkeleton } from './AnalysisSkeleton';
 
 type Props = {
   onAnalyzed?: (recordingId: string) => void;
@@ -30,6 +31,7 @@ export const Recorder = ({ onAnalyzed }: Props) => {
   const { analyze, loading, error } = useAnalysis();
   const hasAutoAnalyzedRef = useRef<string | null>(null);
   const uploadedRef = useRef<string | null>(null);
+  const [showSkeleton, setShowSkeleton] = useState(false);
 
   // Automatically analyze when recording stops
   useEffect(() => {
@@ -42,8 +44,10 @@ export const Recorder = ({ onAnalyzed }: Props) => {
     ) {
       console.log('[Recorder] Auto-analyzing recording:', recordingId);
       hasAutoAnalyzedRef.current = recordingId;
+      setShowSkeleton(true);
       analyze(recordingId, frames, meta, { maxFrames: 20 }).then((result) => {
         if (result) {
+          setShowSkeleton(false);
           if (onAnalyzed) {
             onAnalyzed(recordingId);
           }
