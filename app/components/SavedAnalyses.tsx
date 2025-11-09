@@ -70,7 +70,7 @@ export const SavedAnalyses = ({ onSelect, category = 'recent' }: Props) => {
 
   if (filteredAnalyses.length === 0) {
     return (
-      <div className="w-full border border-gray-400 bg-gray-100 p-8 text-center">
+      <div className="w-full border bg-transparent border-gray-400 bg-gray-100 p-8 text-center">
         <p>No saved analyses yet.</p>
       </div>
     );
