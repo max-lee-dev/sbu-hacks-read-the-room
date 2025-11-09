@@ -131,57 +131,6 @@ export default function AnalysisDetailPage() {
 
           {/* Rules Citation */}
           {analysis.rules && <RulesCitation rules={analysis.rules} />}
-
-          {/* Additional Analytics */}
-          <div className="rounded-lg border border-black bg-white p-4">
-            <h2 className="mb-3 text-lg font-bold text-black">Analytics</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-xs text-black">People Count</div>
-                <div className="mt-1 text-2xl font-bold text-black">{insights.peopleCount}</div>
-              </div>
-              <div>
-                <div className="text-xs text-black">Approachable</div>
-                <div className="mt-1 text-2xl font-bold text-black">{insights.recommendedTargets.length}</div>
-              </div>
-              <div>
-                <div className="text-xs text-black">Avoid</div>
-                <div className="mt-1 text-2xl font-bold text-black">{insights.doNotApproach.length}</div>
-              </div>
-              <div>
-                <div className="text-xs text-black">Model</div>
-                <div className="mt-1 text-sm font-bold text-black">{analysis.model}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Recommended Targets */}
-          {insights.recommendedTargets.length > 0 && (
-            <div className="rounded-lg border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold text-black">Recommended to Approach</h2>
-              <ul className="list-none">
-                {insights.recommendedTargets.map((target, idx) => (
-                  <li key={idx} className="mb-1 text-sm text-black">
-                    <span className="font-bold text-black">Person {target.personId}</span>: <span className="text-black">{target.reason}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Do Not Approach */}
-          {insights.doNotApproach.length > 0 && (
-            <div className="rounded-lg border border-black bg-white p-4">
-              <h2 className="mb-2 text-lg font-bold text-black">Avoid Approaching</h2>
-              <ul className="list-none">
-                {insights.doNotApproach.map((target, idx) => (
-                  <li key={idx} className="mb-1 text-sm text-black">
-                    <span className="font-bold text-black">Person {target.personId}</span>: <span className="text-black">{target.reason}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </main>
 
@@ -189,4 +138,3 @@ export default function AnalysisDetailPage() {
     </div>
   );
 }
-
