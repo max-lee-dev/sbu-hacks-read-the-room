@@ -91,6 +91,7 @@ export type AnalysisResult = {
   rawText: string;
   insights: RoomInsight;
   summarized: SummarizedInsight;
+  rules: string;
   perFrame?: Array<{
     t: number;
     people: PersonInsight[];

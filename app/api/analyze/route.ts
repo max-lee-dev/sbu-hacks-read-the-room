@@ -94,6 +94,60 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Call maistro endpoint with the setting
+    let rules = '';
+    try {
+      const maistroResponse = await fetch(`${req.nextUrl.origin}/api/maistro`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          params: [
+            { name: 'setting', value: pass1Insights.setting },
+          ],
+        }),
+      });
+
+      if (maistroResponse.ok) {
+        const maistroText = await maistroResponse.text();
+        // Try to parse as JSON first
+        try {
+          const maistroData = JSON.parse(maistroText);
+          // Extract the rules string from the response
+          if (typeof maistroData === 'string') {
+            rules = maistroData;
+          } else if (maistroData?.answer) {
+            rules = maistroData.answer;
+          } else if (maistroData?.response) {
+            rules = maistroData.response;
+          } else if (typeof maistroData === 'object') {
+            // Try to find a string value in the response
+            const stringValue = Object.values(maistroData).find(
+              (val) => typeof val === 'string'
+            ) as string | undefined;
+            if (stringValue) {
+              rules = stringValue;
+            } else {
+              rules = maistroText;
+            }
+          } else {
+            rules = maistroText;
+          }
+        } catch {
+          // If not JSON, use the raw text
+          rules = maistroText || '';
+        }
+      } else {
+        const errorText = await maistroResponse.text();
+        console.error('Maistro API error:', errorText);
+        // Continue without rules if maistro fails
+      }
+    } catch (maistroError) {
+      console.error('Failed to call maistro endpoint:', maistroError);
+      // Continue without rules if maistro fails
+    }
+
     const analysisResult: AnalysisResult = {
       recordingId,
       model: modelName,
@@ -101,6 +155,7 @@ export async function POST(req: NextRequest) {
       rawText: pass1Text,
       insights: pass1Insights,
       summarized: summarizedInsights,
+      rules,
     };
 
     return NextResponse.json(analysisResult);
