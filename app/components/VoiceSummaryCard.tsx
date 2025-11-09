@@ -22,6 +22,8 @@ const generateWaveform = (bars: number = 100): number[] => {
 
 export const VoiceSummaryCard = ({ audioUrl }: Props) => {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const retryCountRef = useRef(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -57,10 +59,36 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('ended', handleEnded);
 
-    // Autoplay
-    audio.play().catch((err) => {
-      console.error('Autoplay failed:', err);
-    });
+    // Autoplay with retry mechanism (try for 5 seconds)
+    const attemptAutoplay = async () => {
+      try {
+        await audio.play();
+        // Success - clear any pending retry
+        if (retryTimeoutRef.current) {
+          clearTimeout(retryTimeoutRef.current);
+          retryTimeoutRef.current = null;
+        }
+        retryCountRef.current = 0;
+      } catch (err) {
+        retryCountRef.current += 1;
+        const elapsedSeconds = retryCountRef.current;
+
+        if (elapsedSeconds < 5) {
+          // Retry every second for up to 5 seconds
+          retryTimeoutRef.current = setTimeout(() => {
+            attemptAutoplay();
+          }, 1000);
+        } else {
+          // After 5 seconds of trying, give up
+          console.log('Autoplay failed after 5 seconds, user interaction required');
+          retryCountRef.current = 0;
+        }
+      }
+    };
+
+    // Try autoplay immediately
+    retryCountRef.current = 0;
+    attemptAutoplay();
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
@@ -68,6 +96,13 @@ export const VoiceSummaryCard = ({ audioUrl }: Props) => {
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('ended', handleEnded);
+
+      // Clean up retry timeout
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+        retryTimeoutRef.current = null;
+      }
+      retryCountRef.current = 0;
     };
   }, [audioUrl, duration]);
 
