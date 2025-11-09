@@ -45,16 +45,21 @@ export const Recorder = ({ onAnalyzed }: Props) => {
       console.log('[Recorder] Auto-analyzing recording:', recordingId);
       hasAutoAnalyzedRef.current = recordingId;
       setShowSkeleton(true);
-      analyze(recordingId, frames, meta, { maxFrames: 20 }).then((result) => {
-        if (result) {
+      analyze(recordingId, frames, meta, { maxFrames: 20 })
+        .then((result) => {
           setShowSkeleton(false);
-          if (onAnalyzed) {
-            onAnalyzed(recordingId);
+          if (result) {
+            if (onAnalyzed) {
+              onAnalyzed(recordingId);
+            }
+            // Redirect to dashboard detail page
+            router.push(`/dashboard/${recordingId}`);
           }
-          // Redirect to dashboard detail page
-          router.push(`/dashboard/${recordingId}`);
-        }
-      });
+        })
+        .catch((err) => {
+          console.error('[Recorder] Analysis failed:', err);
+          setShowSkeleton(false);
+        });
     }
   }, [isRecording, frames.length, recordingId, meta, analyze, onAnalyzed, router]);
 
@@ -62,6 +67,7 @@ export const Recorder = ({ onAnalyzed }: Props) => {
   useEffect(() => {
     if (isRecording) {
       hasAutoAnalyzedRef.current = null;
+      setShowSkeleton(false);
     }
   }, [isRecording]);
 
@@ -112,6 +118,7 @@ export const Recorder = ({ onAnalyzed }: Props) => {
 
   const handleReset = () => {
     hasAutoAnalyzedRef.current = null;
+    setShowSkeleton(false);
     reset();
   };
 
@@ -122,8 +129,12 @@ export const Recorder = ({ onAnalyzed }: Props) => {
     }
   };
 
+  if (showSkeleton) {
+    return <AnalysisSkeleton />;
+  }
+
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div className="pt-20 flex w-full flex-col gap-6">
       <div className="relative w-full overflow-hidden rounded-3xl" style={{ border: '1px solid #333' }}>
         <video
           ref={previewRef}
@@ -171,8 +182,8 @@ export const Recorder = ({ onAnalyzed }: Props) => {
         {frames.length > 0 && !isRecording && (
           <button
             className="rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
-            style={{ 
-              backgroundColor: '#333', 
+            style={{
+              backgroundColor: '#333',
               color: '#FFFFFF',
               border: '1px solid #444'
             }}

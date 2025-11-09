@@ -16,7 +16,9 @@ Rules:
    - Example for a library: "Libraries are quiet, focused spaces where most people are reading or studying, so it's best to keep your voice low and avoid interrupting others."
 
 2. "noiseLevel"
-   - Copy directly from the input JSON.
+   - Copy directly from the input JSON's "noiseLevel" field.
+   - This field is REQUIRED and MUST be included in your output.
+   - Use the exact value: "low", "medium", "high", or null.
 
 3. "suggestions"
    - Use up to 3 approachable people and up to 3 avoid targets.

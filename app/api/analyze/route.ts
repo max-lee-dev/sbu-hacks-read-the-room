@@ -86,6 +86,11 @@ export async function POST(req: NextRequest) {
 
     try {
       summarizedInsights = JSON.parse(pass2Text) as SummarizedInsight;
+
+      // Ensure noiseLevel is included - fallback to pass1 if missing or undefined
+      if (summarizedInsights.noiseLevel === undefined && pass1Insights.noiseLevel !== undefined) {
+        summarizedInsights.noiseLevel = pass1Insights.noiseLevel;
+      }
     } catch (parseError) {
       console.error('Failed to parse Pass 2 Gemini response:', pass2Text);
       return NextResponse.json(

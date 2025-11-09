@@ -56,6 +56,7 @@ const tryParseJsonLoose = (text: string) => {
 };
 
 export async function POST(req: Request) {
+
   if (!NS_API_BASE || !NS_API_KEY) {
     return new Response(
       JSON.stringify({

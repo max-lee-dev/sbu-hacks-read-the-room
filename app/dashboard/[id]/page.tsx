@@ -5,6 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { AnalysisResult } from '@/app/lib/types';
 import { getAnalysis, getVideoInfo } from '@/app/lib/storage';
 import { BottomNav } from '@/app/components/BottomNav';
+import { MoodCard } from '@/app/components/MoodCard';
+import { NoiseCard } from '@/app/components/NoiseCard';
+import { SuggestionsCard } from '@/app/components/SuggestionsCard';
+import { TranscriptionCard } from '@/app/components/TranscriptionCard';
+import { VoiceSummaryCard } from '@/app/components/VoiceSummaryCard';
 
 export default function AnalysisDetailPage() {
   const params = useParams();
@@ -13,6 +18,7 @@ export default function AnalysisDetailPage() {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -33,6 +39,51 @@ export default function AnalysisDetailPage() {
     }
     setLoading(false);
   }, [id, router]);
+
+  useEffect(() => {
+    if (!analysis?.summarized?.transcription) return;
+
+    // If audio already exists in result, use it
+    if (analysis.audio?.blobUrl) {
+      setAudioUrl(analysis.audio.blobUrl);
+      return;
+    }
+
+    // Otherwise fetch audio for saved analyses
+    let active = true;
+    let tempUrl: string | null = null;
+
+    const fetchAudio = async () => {
+      try {
+        const res = await fetch('/api/audio', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text: analysis.summarized.transcription }),
+        });
+
+        if (!res.ok || !active) return;
+
+        const blob = await res.blob();
+        tempUrl = URL.createObjectURL(blob);
+        if (active) {
+          setAudioUrl(tempUrl);
+        }
+      } catch (error) {
+        console.error('Failed to fetch audio:', error);
+      }
+    };
+
+    fetchAudio();
+
+    return () => {
+      active = false;
+      if (tempUrl) {
+        URL.revokeObjectURL(tempUrl);
+      }
+    };
+  }, [analysis]);
 
   if (loading) {
     return (
@@ -74,10 +125,12 @@ export default function AnalysisDetailPage() {
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 pb-24">
-        <div className="space-y-6">
+        <div className="w-full border border-black bg-white p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
+          <h2 className="mb-4 text-xl font-bold" style={{ color: '#FFFFFF' }}>Room Analysis</h2>
+
           {/* Video player */}
           {videoUrl && (
-            <div className="rounded-xl p-3" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
+            <div className="mb-4 rounded-xl p-3" style={{ backgroundColor: '#1A1A1A', border: '1px solid #404040' }}>
               <video
                 key={videoUrl}
                 controls
@@ -88,123 +141,27 @@ export default function AnalysisDetailPage() {
             </div>
           )}
 
-          {/* Mood */}
-          {summarized.mood && (
-            <div className="rounded-xl p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
-              <h2 className="mb-2 text-lg font-semibold" style={{ color: '#FFFFFF' }}>Mood</h2>
-              <p className="text-sm leading-relaxed" style={{ color: '#B0B0B0' }}>
-                {summarized.mood}
-              </p>
-            </div>
-          )}
 
-          {/* Noise Level */}
-          {summarized.noiseLevel && (
-            <div className="rounded-xl p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
-              <h2 className="mb-2 text-lg font-semibold" style={{ color: '#FFFFFF' }}>Noise Level</h2>
-              <p className="text-2xl font-bold capitalize" style={{ color: '#FFFFFF' }}>
-                {summarized.noiseLevel}
-              </p>
-            </div>
-          )}
 
-          {/* Suggestions */}
-          {summarized.suggestions && summarized.suggestions.length > 0 && (
-            <div className="rounded-xl p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
-              <h2 className="mb-3 text-lg font-semibold" style={{ color: '#FFFFFF' }}>Suggestions</h2>
-              <ul className="space-y-2.5">
-                {summarized.suggestions.map((suggestion, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-start gap-3 text-sm leading-relaxed"
-                    style={{ color: '#B0B0B0' }}
-                  >
-                    <span className="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-medium" style={{ backgroundColor: '#FFB380', color: '#1A1A1A' }}>
-                      {idx + 1}
-                    </span>
-                    <span className="flex-1">{suggestion.text}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
 
-          {/* Transcription */}
-          {summarized.transcription && (
-            <div className="rounded-xl p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
-              <h2 className="mb-2 text-lg font-semibold" style={{ color: '#FFFFFF' }}>Transcription</h2>
-              <p className="text-sm leading-relaxed" style={{ color: '#B0B0B0' }}>
-                {summarized.transcription}
-              </p>
-            </div>
-          )}
+          <MoodCard mood={summarized.mood || ''} />
+          <NoiseCard noiseLevel={summarized.noiseLevel} />
 
-          {/* Additional Analytics */}
-          <div className="rounded-xl p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #404040', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
-            <h2 className="mb-3 text-lg font-semibold" style={{ color: '#FFFFFF' }}>Analytics</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-xs" style={{ color: '#808080' }}>People Count</div>
-                <div className="mt-1 text-2xl font-bold" style={{ color: '#FFFFFF' }}>{insights.peopleCount}</div>
-              </div>
-              <div>
-                <div className="text-xs" style={{ color: '#808080' }}>Approachable</div>
-                <div className="mt-1 text-2xl font-bold" style={{ color: '#4CAF50' }}>
-                  {insights.recommendedTargets.length}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs" style={{ color: '#808080' }}>Avoid</div>
-                <div className="mt-1 text-2xl font-bold" style={{ color: '#EF5350' }}>
-                  {insights.doNotApproach.length}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs" style={{ color: '#808080' }}>Model</div>
-                <div className="mt-1 text-sm font-medium" style={{ color: '#B0B0B0' }}>{analysis.model}</div>
-              </div>
+          <SuggestionsCard suggestions={summarized.suggestions || []} />
+
+          <TranscriptionCard transcription={summarized.transcription || ''} />
+
+          {audioUrl && <VoiceSummaryCard audioUrl={audioUrl} />}
+
+          <div className="mt-4 border-t border-black pt-3" style={{ borderColor: '#404040' }}>
+            <div className="text-xs" style={{ color: '#808080' }}>
+              Model: {analysis.model} •{' '}
+              {new Date(analysis.createdAt).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
             </div>
           </div>
-
-          {/* Recommended Targets */}
-          {insights.recommendedTargets.length > 0 && (
-            <div className="rounded-xl p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #4CAF50', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
-              <h2 className="mb-2 text-lg font-semibold" style={{ color: '#4CAF50' }}>
-                Recommended to Approach
-              </h2>
-              <ul className="space-y-2">
-                {insights.recommendedTargets.map((target, idx) => (
-                  <li
-                    key={idx}
-                    className="text-sm"
-                    style={{ color: '#B0B0B0' }}
-                  >
-                    <span className="font-medium" style={{ color: '#FFFFFF' }}>Person {target.personId}</span>: {target.reason}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Do Not Approach */}
-          {insights.doNotApproach.length > 0 && (
-            <div className="rounded-xl p-4" style={{ backgroundColor: '#2D2D2D', border: '1px solid #EF5350', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)' }}>
-              <h2 className="mb-2 text-lg font-semibold" style={{ color: '#EF5350' }}>
-                Avoid Approaching
-              </h2>
-              <ul className="space-y-2">
-                {insights.doNotApproach.map((target, idx) => (
-                  <li
-                    key={idx}
-                    className="text-sm"
-                    style={{ color: '#B0B0B0' }}
-                  >
-                    <span className="font-medium" style={{ color: '#FFFFFF' }}>Person {target.personId}</span>: {target.reason}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </main>
 
