@@ -3,7 +3,8 @@
 import { useCallback, useState } from 'react';
 import { SocialAnalysisClient } from '../lib/analysis/SocialAnalysisClient';
 import { AnalysisResult, Frame, RecordingMeta } from '../lib/types';
-import { getVideoInfo, persistAnalysis } from '../lib/storage';
+import { getVideoInfo, persistAnalysis, persistVideoInfo } from '../lib/storage';
+import { uploadRecordingThumbnail } from '../lib/videos';
 
 type AnalyzeOptions = {
   maxFrames?: number;
@@ -33,10 +34,28 @@ export const useAnalysis = () => {
 
       try {
         const analysisResult = await clientRef.analyze(recordingId, frames, meta, options);
-        const videoInfo = getVideoInfo(recordingId);
+        let videoInfo = getVideoInfo(recordingId) ?? analysisResult.video;
+
+        // Upload thumbnail from first frame if available
+        const firstFrame = frames[0]?.dataUrl;
+        if (firstFrame) {
+          try {
+            const thumbnailResult = await uploadRecordingThumbnail(recordingId, firstFrame);
+            videoInfo = {
+              ...(videoInfo || { path: '' }),
+              thumbnailPath: thumbnailResult.path,
+              thumbnailPublicUrl: thumbnailResult.publicUrl,
+            };
+            persistVideoInfo(recordingId, videoInfo);
+          } catch (thumbnailError) {
+            console.error('Failed to upload thumbnail:', thumbnailError);
+            // Continue without thumbnail if upload fails
+          }
+        }
+
         const enriched: AnalysisResult = {
           ...analysisResult,
-          video: videoInfo ?? analysisResult.video,
+          video: videoInfo,
         };
         setResult(enriched);
         persistAnalysis(enriched);
