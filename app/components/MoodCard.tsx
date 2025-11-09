@@ -1,5 +1,7 @@
 'use client';
 
+import { Smile } from 'lucide-react';
+
 type Props = {
   mood: string;
 };
@@ -9,7 +11,10 @@ export const MoodCard = ({ mood }: Props) => {
 
   return (
     <div className="rounded-lg border border-black bg-white p-4">
-      <h2 className="mb-2 text-lg font-bold text-black">Mood</h2>
+      <div className="mb-2 flex items-center gap-2">
+        <Smile className="h-5 w-5 text-black" />
+        <h2 className="text-lg font-bold text-black">Mood</h2>
+      </div>
       <p className="text-sm text-black">{mood}</p>
     </div>
   );

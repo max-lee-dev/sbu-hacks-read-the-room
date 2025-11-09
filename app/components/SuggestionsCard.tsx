@@ -1,5 +1,7 @@
 'use client';
 
+import { Lightbulb } from 'lucide-react';
+
 type Suggestion = {
   text: string;
   frame: number | null;
@@ -14,7 +16,10 @@ export const SuggestionsCard = ({ suggestions }: Props) => {
 
   return (
     <div className="rounded-lg border border-black bg-white p-4">
-      <h2 className="mb-3 text-lg font-bold text-black">Suggestions</h2>
+      <div className="mb-3 flex items-center gap-2">
+        <Lightbulb className="h-5 w-5 text-black" />
+        <h2 className="text-lg font-bold text-black">Suggestions</h2>
+      </div>
       <ul className="list-none">
         {suggestions.map((suggestion, idx) => (
           <li key={idx} className="mb-2 flex items-start gap-2 text-sm text-black">
