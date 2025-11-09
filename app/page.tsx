@@ -32,10 +32,6 @@ export default function Home() {
             </p>
           </div>
         </div>
-
-        <p className="text-sm leading-relaxed" style={{ color: '#B0B0B0' }}>
-          Point your camera at the room, tap Start to record, then Analyze to get social awareness guidance.
-        </p>
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 pb-24">
