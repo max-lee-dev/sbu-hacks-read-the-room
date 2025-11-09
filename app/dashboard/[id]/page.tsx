@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { AnalysisResult } from '@/app/lib/types';
 import { getAnalysis, getVideoInfo } from '@/app/lib/storage';
 import { BottomNav } from '@/app/components/BottomNav';
+import { RulesCitation } from '@/app/components/RulesCitation';
 
 export default function AnalysisDetailPage() {
   const params = useParams();
@@ -127,6 +128,9 @@ export default function AnalysisDetailPage() {
               <p className="text-sm">{summarized.transcription}</p>
             </div>
           )}
+
+          {/* Rules Citation */}
+          {analysis.rules && <RulesCitation rules={analysis.rules} />}
 
           {/* Additional Analytics */}
           <div className="border border-black bg-white p-4">
